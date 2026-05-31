@@ -279,11 +279,12 @@
     "vs2026_gui": {
       "steps": [
         "1. Open Visual Studio 2026",
-        "2. Go to Tools → Options → Environment → Extensions",
+        "2. Go to Tools -> Options -> Environment -> Extensions",
         "3. In MCP Server List, click Add",
         "4. Enter Name: 'universal-vsmcp'",
-        "5. Check 'Edit user settings as JSON'",
-        "6. Paste the mcpServers configuration from this file"
+        "5. Enter Command: 'dotnet'",
+        "6. Enter Args: 'tool run --global universal-vsmcp -- --stdio'",
+        "7. Save and restart VS"
       ]
     },
     "claude_desktop": {
