@@ -5,7 +5,7 @@
   },
   "projects": {
     "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj": {
-      "version": "26.0.0-20260531-uvm",
+      "version": "26.0.0",
       "restore": {
         "projectUniqueName": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
         "projectName": "UniversalVSMCP",
@@ -90,11 +90,19 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
         }
       }
     }

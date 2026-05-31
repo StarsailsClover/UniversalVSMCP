@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("MCP Server for Visual Studio 2026/2022 automation via DTE/OM")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("26.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("26.0.0-20260531-uvm+09c8326b4052c8489c9cf6401d3444078734c35d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("26.0.0+7ff9b952ca55389a080ec8afa7de6bcab2fdc0e3")]
 [assembly: System.Reflection.AssemblyProductAttribute("UniversalVSMCP")]
 [assembly: System.Reflection.AssemblyTitleAttribute("UniversalVSMCP")]
 [assembly: System.Reflection.AssemblyVersionAttribute("26.0.0.0")]

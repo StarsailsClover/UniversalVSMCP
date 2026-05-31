@@ -1,8 +1,8 @@
 {
-  "$schema": "https://github.com/docker/mcp-community-registry/blob/main/docs/reference/server-json/draft/server.schema.json",
+  "$schema": "https://raw.githubusercontent.com/docker/mcp-community-registry/main/docs/reference/server-json/draft/server.schema.json",
   "name": "universal-vsmcp",
   "version": "26.0.0",
-  "description": "MCP Server for Visual Studio 2026/2022 automation via DTE/OM. Enables AI agents to control VS through file operations, project management, builds, and debugging.",
+  "description": "MCP Server for Visual Studio 2026/2022 automation via DTE/OM. Supports both stdio and HTTP/SSE transports for maximum compatibility.",
   "author": {
     "name": "StarsailsClover",
     "email": "contact@starsailsclover.dev",
@@ -25,12 +25,16 @@
     "envdte",
     "vs2026",
     "vs2022",
-    "ai-agent"
+    "ai-agent",
+    "sse",
+    "http"
   ],
   "category": "development",
-  "tags": ["visual-studio", "mcp", "automation", "dotnet"],
+  "tags": ["visual-studio", "mcp", "automation", "dotnet", "sse", "http"],
+  "transports": ["stdio", "sse", "http"],
   "mcpServers": {
-    "universal-vsmcp": {
+    "universal-vsmcp-stdio": {
+      "name": "Universal VS MCP (stdio)",
       "command": "dotnet",
       "args": [
         "tool",
@@ -43,9 +47,17 @@
       "transport": "stdio",
       "env": {
         "VS_AUTO_DETECT": "true"
-      }
+      },
+      "description": "Primary stdio transport for Claude/Cursor. Best for AI agents."
     },
-    "universal-vsmcp-local": {
+    "universal-vsmcp-sse": {
+      "name": "Universal VS MCP (SSE)",
+      "url": "http://localhost:5000/sse",
+      "transport": "sse",
+      "description": "HTTP/SSE transport for Visual Studio 2026 MCP Server Manager. Start server with 'universal-vsmcp --http 5000'"
+    },
+    "universal-vsmcp-local-stdio": {
+      "name": "Universal VS MCP (Local stdio)",
       "command": "dotnet",
       "args": [
         "run",
@@ -57,23 +69,41 @@
       "transport": "stdio",
       "env": {
         "VS_AUTO_DETECT": "true"
-      }
-    },
-    "universal-vsmcp-localhost": {
-      "command": "dotnet",
-      "args": [
-        "run",
-        "--project",
-        "C:\\path\\to\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
-        "--",
-        "--stdio"
-      ],
-      "transport": "stdio",
-      "url": "http://localhost:6277/sse",
-      "env": {
-        "VS_AUTO_DETECT": "true"
-      }
+      },
+      "description": "Local development with stdio transport"
     }
+  },
+  "installation": {
+    "dotnetTool": {
+      "command": "dotnet tool install -g UniversalVSMCP",
+      "package": "UniversalVSMCP"
+    }
+  },
+  "configuration": {
+    "stdio": {
+      "command": "universal-vsmcp",
+      "args": ["--stdio"],
+      "description": "Standard input/output transport"
+    },
+    "http": {
+      "command": "universal-vsmcp",
+      "args": ["--http", "5000"],
+      "url": "http://localhost:5000/sse",
+      "description": "HTTP/SSE transport on localhost"
+    },
+    "hybrid": {
+      "command": "universal-vsmcp",
+      "args": ["--hybrid", "5000"],
+      "description": "Both stdio and HTTP transports"
+    }
+  },
+  "requirements": {
+    "dotnet": ">=8.0.0",
+    "visualStudio": {
+      "vs2026": ">=18.0",
+      "vs2022": ">=17.14"
+    },
+    "os": ["windows"]
   },
   "tools": [
     {
@@ -88,7 +118,7 @@
     },
     {
       "name": "get_solution_name",
-      "description": "Get the name of the currently open solution",
+      "description": "Get the name of the current solution",
       "category": "solution"
     },
     {
@@ -103,12 +133,12 @@
     },
     {
       "name": "create_solution",
-      "description": "Create a new solution (workspace) at specified path",
+      "description": "Create a new solution/workspace",
       "category": "solution"
     },
     {
       "name": "get_project_files",
-      "description": "Get files in a specific project",
+      "description": "Get files in a project",
       "category": "project"
     },
     {
@@ -143,7 +173,7 @@
     },
     {
       "name": "write_file",
-      "description": "Write content to file",
+      "description": "Write file content",
       "category": "file"
     },
     {
@@ -177,13 +207,13 @@
       "category": "build"
     },
     {
-      "name": "get_build_errors",
-      "description": "Get build errors",
+      "name": "get_build_configurations",
+      "description": "Get available build configurations",
       "category": "build"
     },
     {
-      "name": "get_build_configurations",
-      "description": "Get available build configurations",
+      "name": "set_build_configuration",
+      "description": "Set build configuration",
       "category": "build"
     },
     {
@@ -193,17 +223,22 @@
     },
     {
       "name": "stop_debugging",
-      "description": "Stop debugging (Shift+F5)",
+      "description": "Stop debugging",
       "category": "debug"
     },
     {
-      "name": "toggle_breakpoint",
-      "description": "Navigate to line for breakpoint",
+      "name": "set_breakpoint",
+      "description": "Set breakpoint in file",
       "category": "debug"
     },
     {
-      "name": "continue_execution",
-      "description": "Continue from breakpoint (F5)",
+      "name": "remove_breakpoint",
+      "description": "Remove breakpoint",
+      "category": "debug"
+    },
+    {
+      "name": "get_breakpoints",
+      "description": "List all breakpoints",
       "category": "debug"
     },
     {
@@ -212,49 +247,14 @@
       "category": "debug"
     },
     {
-      "name": "step_into",
-      "description": "Step into (F11)",
-      "category": "debug"
+      "name": "health_check",
+      "description": "Check server and VS connection status",
+      "category": "diagnostic"
     },
     {
-      "name": "step_out",
-      "description": "Step out (Shift+F11)",
-      "category": "debug"
-    },
-    {
-      "name": "get_debug_state",
-      "description": "Get current debug state",
-      "category": "debug"
+      "name": "get_server_info",
+      "description": "Get server information and capabilities",
+      "category": "diagnostic"
     }
-  ],
-  "requirements": {
-    "dotnet": ">=8.0.0",
-    "visual_studio": {
-      "vs2026": "18.0",
-      "vs2022": "17.14+"
-    },
-    "os": "Windows 10+"
-  },
-  "installation": {
-    "nuget": {
-      "package_id": "UniversalVSMCP",
-      "version": "1.0.0",
-      "command": "dotnet tool install -g UniversalVSMCP",
-      "url": "https://www.nuget.org/packages/UniversalVSMCP/"
-    },
-    "source": {
-      "command": "dotnet run --project UniversalVSMCP.csproj -- --stdio",
-      "url": "https://github.com/StarsailsClover/UniversalVSMCP"
-    }
-  },
-  "configuration": {
-    "user_level": {
-      "path_windows": "%APPDATA%\\VisualStudio\\18.0\\UserSettings.json",
-      "description": "User-level MCP configuration"
-    },
-    "solution_level": {
-      "path": "<solution-root>\\.mcp.json",
-      "description": "Solution-level MCP configuration"
-    }
-  }
+  ]
 }

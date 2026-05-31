@@ -1,9 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <IsPackable>true</IsPackable>
     
     <!-- MCP Server Configuration -->
     <PackAsTool>true</PackAsTool>
@@ -15,8 +18,8 @@
     <Authors>StarsailsClover</Authors>
     <AssemblyVersion>26.0.0.0</AssemblyVersion>
     <FileVersion>26.0.0.0</FileVersion>
-    <Description>MCP Server for Visual Studio 2026/2022 automation via DTE/OM</Description>
-    <PackageTags>mcp;visual-studio;dte;automation;dotnet</PackageTags>
+    <Description>MCP Server for Visual Studio 2026/2022 automation via DTE/OM with HTTP/SSE transport support</Description>
+    <PackageTags>mcp;visual-studio;dte;automation;dotnet;sse;http</PackageTags>
     <PackageProjectUrl>https://github.com/StarsailsClover/UniversalVSMCP</PackageProjectUrl>
     
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -43,7 +46,7 @@
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
-    <None Include="..\..\server.json" Pack="true" PackagePath="\" />
-    
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
   </ItemGroup>
+
 </Project>
