@@ -16,7 +16,7 @@
     <Description>MCP Server for Visual Studio 2026/2022 automation via DTE/OM</Description>
     <PackageTags>mcp;visual-studio;dte;automation;dotnet</PackageTags>
     <PackageProjectUrl>https://github.com/StarsailsClover/UniversalVSMCP</PackageProjectUrl>
-    <PackageIcon>icon.png</PackageIcon>
+    
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     
@@ -42,6 +42,6 @@
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     <None Include="..\..\server.json" Pack="true" PackagePath="\" />
-    <None Include="icon.png" Pack="true" PackagePath="\" />
+    
   </ItemGroup>
 </Project>
