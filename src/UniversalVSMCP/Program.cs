@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using UniversalVSMCP;
 
 namespace UniversalVSMCP;
 
@@ -14,21 +15,14 @@ namespace UniversalVSMCP;
 /// UniversalVSMCP (UVM) - MCP Server for Visual Studio 2026/2022
 /// Bridges AI Agents to Visual Studio via DTE/OM
 /// 
-/// Features:
-/// - Native .NET 8.0 implementation for optimal performance
-/// - Direct DTE/COM integration with Visual Studio
-/// - 28 MCP tools for comprehensive VS automation
-/// - MCP Registry compatible for VS 2026 one-click installation
-/// - Global .NET tool packaging
-/// 
 /// Usage:
-///   dotnet run -- --stdio          # Run with stdio transport
-///   dotnet run -- --sse --port 6277  # Run with SSE transport
-///   universal-vsmcp --stdio        # After global tool install
+///   universal-vsmcp --stdio                    # Default: stdio transport
+///   universal-vsmcp --stdio --log-file uv.log  # With file logging
+///   universal-vsmcp --help                     # Show help
 /// </summary>
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
         Console.WriteLine("=================================================================");
         Console.WriteLine("         UniversalVSMCP (UVM) v1.0.0 - VS 2026/2022 MCP Server         ");
@@ -38,7 +32,7 @@ public class Program
         var config = ParseArgs(args);
         Console.WriteLine($"Transport:  {config.TransportMode}");
         Console.WriteLine($"VS Target:  {config.VsVersion ?? "Auto-detect latest instance"}");
-        Console.WriteLine($"Port:       {config.Port}");
+        Console.WriteLine($"Log File:   {config.LogFile ?? "console only"}");
         Console.WriteLine();
 
         try
@@ -46,17 +40,18 @@ public class Program
             await Host.CreateDefaultBuilder(args)
                 .ConfigureServices((context, services) =>
                 {
-                    // Register VS Connection Manager (Singleton - single VS connection)
+                    // Register VS Connection Manager (Singleton)
                     services.AddSingleton<IVsConnectionManager, VsConnectionManager>();
                     
-                    // Register tool sets (Scoped - new instance per request)
+                    // Register tool sets
                     services.AddScoped<SolutionTools>();
                     services.AddScoped<ProjectTools>();
                     services.AddScoped<FileTools>();
                     services.AddScoped<BuildTools>();
                     services.AddScoped<DebugTools>();
+                    services.AddScoped<DiagnosticTools>();
                     
-                    // Register MCP Server
+                    // Register MCP Server with stdio transport
                     services.AddMcpServer(options =>
                     {
                         options.ServerInfo = new ModelContextProtocol.Protocol.Implementation
@@ -75,6 +70,12 @@ public class Program
                     {
                         options.TimestampFormat = "[HH:mm:ss] ";
                     });
+                    
+                    if (!string.IsNullOrEmpty(config.LogFile))
+                    {
+                        logging.AddProvider(new FileLoggerProvider(config.LogFile));
+                    }
+                    
                     logging.SetMinimumLevel(LogLevel.Information);
                 })
                 .RunConsoleAsync();
@@ -83,8 +84,10 @@ public class Program
         {
             Console.WriteLine($"\n[FATAL] {ex.Message}");
             Console.WriteLine($"Stack: {ex.StackTrace}");
-            Environment.Exit(1);
+            return 1;
         }
+        
+        return 0;
     }
 
     private static ServerConfig ParseArgs(string[] args)
@@ -92,7 +95,7 @@ public class Program
         var config = new ServerConfig
         {
             TransportMode = "stdio",
-            Port = 6277
+            LogFile = Environment.GetEnvironmentVariable("UVM_LOG_FILE")
         };
         
         for (int i = 0; i < args.Length; i++)
@@ -104,16 +107,10 @@ public class Program
                     if (i + 1 < args.Length)
                         config.VsVersion = args[++i];
                     break;
-                case "--port":
-                case "-p":
-                    if (i + 1 < args.Length && int.TryParse(args[++i], out int port))
-                        config.Port = port;
-                    break;
-                case "--sse":
-                    config.TransportMode = "sse";
-                    break;
-                case "--stdio":
-                    config.TransportMode = "stdio";
+                case "--log-file":
+                case "--log":
+                    if (i + 1 < args.Length)
+                        config.LogFile = args[++i];
                     break;
                 case "--help":
                 case "-h":
@@ -134,10 +131,18 @@ public class Program
         Console.WriteLine();
         Console.WriteLine("Options:");
         Console.WriteLine("  --stdio              Use stdio transport (default)");
-        Console.WriteLine("  --sse                Use SSE transport");
-        Console.WriteLine("  --port <number>      Port for SSE mode (default: 6277)");
         Console.WriteLine("  --vs-version <ver>   Target VS version (e.g., 17.0 for VS 2022)");
+        Console.WriteLine("  --log-file <path>    Log to file (default: console only)");
         Console.WriteLine("  --help               Show this help");
+        Console.WriteLine();
+        Console.WriteLine("Environment Variables:");
+        Console.WriteLine("  UVM_LOG_FILE         Path to log file");
+        Console.WriteLine("  VS_AUTO_DETECT       Set to 'true' to auto-detect VS instance");
+        Console.WriteLine();
+        Console.WriteLine("Examples:");
+        Console.WriteLine("  universal-vsmcp --stdio");
+        Console.WriteLine("  universal-vsmcp --stdio --log-file uv.log");
+        Console.WriteLine("  dotnet run -- --stdio --vs-version 17.0");
     }
 }
 
@@ -148,5 +153,5 @@ public class ServerConfig
 {
     public string TransportMode { get; set; } = "stdio";
     public string? VsVersion { get; set; }
-    public int Port { get; set; } = 6277;
+    public string? LogFile { get; set; }
 }
