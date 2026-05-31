@@ -20,7 +20,7 @@ The `server.json` file is already created at the root of this repository with:
 ```json
 {
   "name": "universal-vsmcp",
-  "version": "1.0.0",
+  "version": "26.0.0",
   "mcpServers": { ... },
   "tools": [ ... ],
   "requirements": { ... }
@@ -45,12 +45,12 @@ cd src/UniversalVSMCP
 dotnet pack -c Release -o ./nupkg
 ```
 
-This creates: `UniversalVSMCP.1.0.0.nupkg`
+This creates: `UniversalVSMCP.26.0.0.nupkg`
 
 ### 2.2 Publish to NuGet.org
 
 ```bash
-dotnet nuget push ./nupkg/UniversalVSMCP.1.0.0.nupkg \
+dotnet nuget push ./nupkg/UniversalVSMCP.26.0.0.nupkg \
   --api-key YOUR_NUGET_API_KEY \
   --source https://api.nuget.org/v3/index.json
 ```

@@ -11,8 +11,10 @@
     
     <!-- Package Info -->
     <PackageId>UniversalVSMCP</PackageId>
-    <Version>1.0.0</Version>
+    <Version>26.0.0</Version>
     <Authors>StarsailsClover</Authors>
+    <AssemblyVersion>26.0.0.0</AssemblyVersion>
+    <FileVersion>26.0.0.0</FileVersion>
     <Description>MCP Server for Visual Studio 2026/2022 automation via DTE/OM</Description>
     <PackageTags>mcp;visual-studio;dte;automation;dotnet</PackageTags>
     <PackageProjectUrl>https://github.com/StarsailsClover/UniversalVSMCP</PackageProjectUrl>

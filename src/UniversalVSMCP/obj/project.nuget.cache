@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "FqNPK2UvXMU=",
+  "dgSpecHash": "mb5Vs9qZbKE=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+  "projectFilePath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Sails\\.nuget\\packages\\envdte\\17.11.40262\\envdte.17.11.40262.nupkg.sha512",
     "C:\\Users\\Sails\\.nuget\\packages\\envdte80\\17.11.40262\\envdte80.17.11.40262.nupkg.sha512",
@@ -48,9 +48,9 @@
       "code": "NU1603",
       "level": "Warning",
       "message": "UniversalVSMCP 依赖于 envdte (>= 17.11.4000)，但没有找到 envdte 17.11.4000。已改为解析 envdte 17.11.40262。",
-      "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
       "libraryId": "envdte",
       "targetGraphs": [
         "net8.0"
@@ -60,9 +60,9 @@
       "code": "NU1603",
       "level": "Warning",
       "message": "UniversalVSMCP 依赖于 envdte80 (>= 17.11.4000)，但没有找到 envdte80 17.11.4000。已改为解析 envdte80 17.11.40262。",
-      "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
       "libraryId": "envdte80",
       "targetGraphs": [
         "net8.0"
@@ -72,9 +72,9 @@
       "code": "NU1603",
       "level": "Warning",
       "message": "UniversalVSMCP 依赖于 ModelContextProtocol (>= 0.3.0-preview)，但没有找到 ModelContextProtocol 0.3.0-preview。已改为解析 ModelContextProtocol 0.3.0-preview.1。",
-      "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
       "libraryId": "ModelContextProtocol",
       "targetGraphs": [
         "net8.0"

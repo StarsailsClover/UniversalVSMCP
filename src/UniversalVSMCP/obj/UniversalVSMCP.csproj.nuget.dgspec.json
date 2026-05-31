@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj": {}
+    "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj": {
-      "version": "1.0.0",
+    "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj": {
+      "version": "26.0.0-20260531-uvm",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+        "projectUniqueName": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
         "projectName": "UniversalVSMCP",
-        "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+        "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
         "packagesPath": "C:\\Users\\Sails\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\obj\\",
+        "outputPath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
