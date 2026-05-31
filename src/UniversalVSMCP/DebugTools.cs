@@ -10,6 +10,7 @@ namespace UniversalVSMCP;
 
 /// <summary>
 /// Tools for Visual Studio Debug operations
+/// Enables AI Agents to control debugging sessions
 /// </summary>
 [McpServerToolType]
 public class DebugTools
@@ -41,7 +42,7 @@ public class DebugTools
         {
             dte.Debugger.Go();
             _logger.LogInformation("Started debugging");
-            return OperationResult.IsSuccess("Debugging started");
+            return OperationResult.Success("Debugging started");
         }
         catch (Exception ex)
         {
@@ -68,7 +69,7 @@ public class DebugTools
         {
             dte.Debugger.Go(false); // false = don't break on exceptions
             _logger.LogInformation("Started without debugging");
-            return OperationResult.IsSuccess("Execution started without debugging");
+            return OperationResult.Success("Execution started without debugging");
         }
         catch (Exception ex)
         {
@@ -95,7 +96,7 @@ public class DebugTools
         {
             dte.Debugger.Stop(false);
             _logger.LogInformation("Stopped debugging");
-            return OperationResult.IsSuccess("Debugging stopped");
+            return OperationResult.Success("Debugging stopped");
         }
         catch (Exception ex)
         {
@@ -107,7 +108,7 @@ public class DebugTools
     /// <summary>
     /// Toggle breakpoint at a specific line
     /// </summary>
-    [McpServerTool(Name = "toggle_breakpoint", Title = "Toggle a breakpoint at the specified file and line number.")]
+    [McpServerTool(Name = "toggle_breakpoint", Title = "Navigate to a file and line. User can press F9 to toggle breakpoint manually.")]
     public async Task<OperationResult> ToggleBreakpoint(string filePath, int lineNumber, CancellationToken ct = default)
     {
         await Task.CompletedTask;
@@ -123,24 +124,21 @@ public class DebugTools
             // Open the file first
             var window = dte.ItemOperations.OpenFile(filePath, EnvDTE.Constants.vsViewKindPrimary);
             
-            // Get the text selection and create breakpoint
+            // Navigate to the line
             var selection = window?.Selection as TextSelection;
             if (selection != null)
             {
                 selection.GotoLine(lineNumber, false);
-                // Note: Breakpoint creation via DTE is complex and version-dependent
-                // For now, just navigate to the line and let user manually set breakpoint
                 _logger.LogInformation("Navigated to {File}:{Line} - User can press F9 to toggle breakpoint", filePath, lineNumber);
-                return OperationResult.IsSuccess($"Navigated to line {lineNumber}. Press F9 to toggle breakpoint.");
-                return OperationResult.IsSuccess($"Breakpoint toggled at line {lineNumber}");
+                return OperationResult.Success($"Navigated to line {lineNumber}. Press F9 to toggle breakpoint.");
             }
             
             return OperationResult.Failure("Could not access text selection");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to toggle breakpoint");
-            return OperationResult.Failure($"Failed to toggle breakpoint: {ex.Message}");
+            _logger.LogError(ex, "Failed to navigate to breakpoint location");
+            return OperationResult.Failure($"Failed: {ex.Message}");
         }
     }
 
@@ -162,7 +160,7 @@ public class DebugTools
         {
             dte.Debugger.Go();
             _logger.LogInformation("Continued execution");
-            return OperationResult.IsSuccess("Execution continued");
+            return OperationResult.Success("Execution continued");
         }
         catch (Exception ex)
         {
@@ -189,7 +187,7 @@ public class DebugTools
         {
             dte.Debugger.StepOver();
             _logger.LogInformation("Stepped over");
-            return OperationResult.IsSuccess("Stepped over");
+            return OperationResult.Success("Stepped over");
         }
         catch (Exception ex)
         {
@@ -216,7 +214,7 @@ public class DebugTools
         {
             dte.Debugger.StepInto();
             _logger.LogInformation("Stepped into");
-            return OperationResult.IsSuccess("Stepped into");
+            return OperationResult.Success("Stepped into");
         }
         catch (Exception ex)
         {
@@ -243,7 +241,7 @@ public class DebugTools
         {
             dte.Debugger.StepOut();
             _logger.LogInformation("Stepped out");
-            return OperationResult.IsSuccess("Stepped out");
+            return OperationResult.Success("Stepped out");
         }
         catch (Exception ex)
         {

@@ -5,6 +5,16 @@
 
 ---
 
+## v1.0.0 新特性
+
+- **.NET 8.0 原生实现** - 无需 Python 或 Node.js 依赖
+- **28 个 MCP 工具** - 全面的 VS 自动化（解决方案、项目、文件、构建、调试）
+- **MCP Registry 兼容** - 在 VS 2026 中一键安装
+- **全局 .NET 工具** - `dotnet tool install -g UniversalVSMCP`
+- **原生 DTE/COM 集成** - 直接通过 Windows COM 与 Visual Studio 交互
+
+---
+
 ## 为什么选择 .NET 原生方案？
 
 | 特性 | Python (旧版) | .NET 原生 (当前版) |
@@ -24,6 +34,12 @@
 
 ```bash
 dotnet tool install -g UniversalVSMCP
+```
+
+安装后运行：
+
+```bash
+universal-vsmcp --stdio
 ```
 
 ### 方式二：从源码运行
@@ -47,17 +63,18 @@ dotnet tool install -g UniversalVSMCP --version 1.0.0
 ### 方式 A：MCP Registry（推荐）
 
 1. 打开 **Visual Studio 2026**
-2. **工具** → **选项** → **环境** → **扩展**
+2. **工具** -> **选项** -> **环境** -> **扩展**
 3. 在 **MCP Registry** 区域点击 **添加**
 4. 输入：
    - **名称**: `UniversalVSMCP Official`
    - **URL**: `https://github.com/StarsailsClover/UniversalVSMCP`
 5. VS 会扫描 `server.json` 并列出可用服务器
 6. 选择 `universal-vsmcp` 并点击 **安装**
+7. 如需要请重启 Visual Studio
 
 ### 方式 B：手动添加 MCP 服务器
 
-1. **工具** → **选项** → **环境** → **扩展**
+1. **工具** -> **选项** -> **环境** -> **扩展**
 2. 在 **MCP 服务器列表** 点击 **添加**
 3. 填写：
    - **名称**: `universal-vsmcp`
@@ -95,27 +112,54 @@ dotnet tool install -g UniversalVSMCP --version 1.0.0
 
 ## 可用工具
 
-| 工具 | 描述 | 类别 |
-|------|------|------|
-| `get_solution_projects` | 获取解决方案中所有项目 | Solution |
-| `get_solution_path` | 获取当前解决方案路径 | Solution |
-| `get_solution_name` | 获取当前解决方案名称 | Solution |
-| `open_solution` | 打开 .sln 文件 | Solution |
-| `close_solution` | 关闭当前解决方案 | Solution |
-| `open_file` | 在 VS 编辑器中打开文件 | File |
-| `read_file` | 读取文件内容 | File |
-| `write_file` | 写入文件内容 | File |
-| `build_solution` | 构建解决方案 | Build |
-| `build_project` | 构建指定项目 | Build |
-| `get_build_errors` | 获取构建错误 | Build |
-| `get_build_configurations` | 获取可用构建配置 | Build |
-| `start_debugging` | 开始调试 (F5) | Debug |
-| `stop_debugging` | 停止调试 (Shift+F5) | Debug |
-| `toggle_breakpoint` | 切换断点 | Debug |
-| `step_over` | 单步跳过 (F10) | Debug |
-| `step_into` | 单步进入 (F11) | Debug |
-| `step_out` | 单步跳出 (Shift+F11) | Debug |
-| `get_debug_state` | 获取当前调试状态 | Debug |
+### 解决方案管理
+| 工具 | 描述 |
+|------|------|
+| `get_solution_projects` | 获取解决方案中所有项目 |
+| `get_solution_path` | 获取当前解决方案路径 |
+| `get_solution_name` | 获取当前解决方案名称 |
+| `open_solution` | 打开 .sln 文件 |
+| `close_solution` | 关闭当前解决方案 |
+
+### 项目管理
+| 工具 | 描述 |
+|------|------|
+| `get_project_files` | 获取项目中的文件 |
+| `get_startup_projects` | 获取启动项目 |
+| `add_file_to_project` | 添加文件到项目 |
+| `set_startup_project` | 设置启动项目 |
+| `get_project_properties` | 获取项目属性 |
+
+### 文件操作
+| 工具 | 描述 |
+|------|------|
+| `open_file` | 在 VS 编辑器中打开文件 |
+| `read_file` | 读取文件内容 |
+| `write_file` | 写入文件内容 |
+| `replace_in_file` | 替换文件中的文本 |
+| `get_file_info` | 获取文件信息 |
+
+### 构建操作
+| 工具 | 描述 |
+|------|------|
+| `build_solution` | 构建解决方案 |
+| `rebuild_solution` | 重新构建解决方案 |
+| `clean_solution` | 清理解决方案 |
+| `build_project` | 构建指定项目 |
+| `get_build_errors` | 获取构建错误 |
+| `get_build_configurations` | 获取构建配置 |
+
+### 调试控制
+| 工具 | 描述 |
+|------|------|
+| `start_debugging` | 开始调试 (F5) |
+| `stop_debugging` | 停止调试 (Shift+F5) |
+| `toggle_breakpoint` | 导航到断点行 |
+| `continue_execution` | 继续执行 (F5) |
+| `step_over` | 单步跳过 (F10) |
+| `step_into` | 单步进入 (F11) |
+| `step_out` | 单步跳出 (Shift+F11) |
+| `get_debug_state` | 获取调试状态 |
 
 ---
 
@@ -125,9 +169,14 @@ dotnet tool install -g UniversalVSMCP --version 1.0.0
 UniversalVSMCP/
 ├── server.json              # MCP Registry 配置（VS 2026 发现）
 ├── REGISTRY.md              # Registry 注册指南
-├── README.md                # English documentation
+├── README.md                # English documentation (default)
 ├── README.zh.md             # 中文文档
 ├── Link2VS.skill/          # AI Agent 技能包
+├── pyproject.toml           # Python 包配置（遗留）
+├── requirements.txt         # Python 依赖（遗留）
+├── config_templates.py      # VS 配置模板（遗留）
+├── tests/
+│   └── test_core.py         # Python 测试（遗留）
 └── src/UniversalVSMCP/
     ├── UniversalVSMCP.csproj
     ├── Program.cs           # 入口点 + MCP Server 配置
@@ -180,6 +229,37 @@ UniversalVSMCP/
 
 ---
 
+## 系统要求
+
+- .NET 8.0 SDK 或更高版本
+- Visual Studio 2026 (18.0) 或 VS 2022 (17.14+)
+- Windows 10 或更高版本
+
+---
+
+## 故障排除
+
+### MCP Registry 不显示服务器
+
+1. 确认 `server.json` 在仓库根目录且为有效 JSON
+2. 确保仓库是公开的
+3. 添加 Registry 后重启 Visual Studio
+4. 如果 Registry 功能不稳定，使用方法 B（手动配置）
+
+### 服务器无法启动
+
+1. 确认 .NET 8.0 SDK 已安装：`dotnet --version`
+2. 安装全局工具：`dotnet tool install -g UniversalVSMCP`
+3. 手动测试：`universal-vsmcp --stdio`
+
+### DTE 连接失败
+
+1. 运行服务器前先启动 Visual Studio
+2. 至少打开一个解决方案
+3. 确认 VS 不是以管理员身份运行（与用户令牌不匹配）
+
+---
+
 ## 许可
 
 MIT © StarsailsClover
@@ -192,3 +272,4 @@ MIT © StarsailsClover
 - [Microsoft MCP .NET Samples](https://github.com/microsoft/mcp-dotnet-samples)
 - [Visual Studio 2026](https://learn.microsoft.com/en-us/visualstudio/)
 - [GitHub 仓库](https://github.com/StarsailsClover/UniversalVSMCP)
+- [NuGet 包](https://www.nuget.org/packages/UniversalVSMCP/)

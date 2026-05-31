@@ -11,6 +11,7 @@ namespace UniversalVSMCP;
 
 /// <summary>
 /// Tools for Visual Studio Project-level operations
+/// Enables AI Agents to inspect and modify project structure
 /// </summary>
 [McpServerToolType]
 public class ProjectTools
@@ -111,7 +112,7 @@ public class ProjectTools
         {
             project.ProjectItems.AddFromFile(filePath);
             _logger.LogInformation("Added file {File} to project {Project}", filePath, projectName);
-            return OperationResult.IsSuccess($"File added to project: {System.IO.Path.GetFileName(filePath)}");
+            return OperationResult.Success($"File added to project: {System.IO.Path.GetFileName(filePath)}");
         }
         catch (Exception ex)
         {
@@ -144,7 +145,7 @@ public class ProjectTools
 
             dte.Solution.SolutionBuild.StartupProjects = project.UniqueName;
             _logger.LogInformation("Set startup project to: {Project}", projectName);
-            return OperationResult.IsSuccess($"Startup project set to: {projectName}");
+            return OperationResult.Success($"Startup project set to: {projectName}");
         }
         catch (Exception ex)
         {
@@ -201,7 +202,7 @@ public class ProjectTools
     {
         foreach (Project project in solution.Projects)
         {
-            if (project.Name.Equals(projectName, System.StringComparison.OrdinalIgnoreCase))
+            if (project.Name.Equals(projectName, StringComparison.OrdinalIgnoreCase))
             {
                 return project;
             }
@@ -220,7 +221,7 @@ public class ProjectTools
         foreach (ProjectItem item in items)
         {
             if (item.SubProject != null && 
-                item.SubProject.Name.Equals(projectName, System.StringComparison.OrdinalIgnoreCase))
+                item.SubProject.Name.Equals(projectName, StringComparison.OrdinalIgnoreCase))
             {
                 return item.SubProject;
             }

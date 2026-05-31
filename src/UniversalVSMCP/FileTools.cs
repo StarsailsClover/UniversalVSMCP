@@ -12,6 +12,7 @@ namespace UniversalVSMCP;
 
 /// <summary>
 /// Tools for file operations within Visual Studio
+/// Provides file reading, writing, and editing capabilities
 /// </summary>
 [McpServerToolType]
 public class FileTools
@@ -58,7 +59,7 @@ public class FileTools
                 _logger.LogInformation("Opened file: {File}", filePath);
             }
             
-            return OperationResult.IsSuccess($"Opened: {Path.GetFileName(filePath)}");
+            return OperationResult.Success($"Opened: {Path.GetFileName(filePath)}");
         }
         catch (Exception ex)
         {
@@ -135,7 +136,7 @@ public class FileTools
             await File.WriteAllTextAsync(filePath, content, Encoding.UTF8);
             
             _logger.LogInformation("Wrote {Chars} characters to {File}", content.Length, filePath);
-            return OperationResult.IsSuccess($"File written: {Path.GetFileName(filePath)}");
+            return OperationResult.Success($"File written: {Path.GetFileName(filePath)}");
         }
         catch (Exception ex)
         {

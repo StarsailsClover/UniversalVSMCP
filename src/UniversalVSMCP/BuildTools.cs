@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using EnvDTE;
@@ -10,6 +11,7 @@ namespace UniversalVSMCP;
 
 /// <summary>
 /// Tools for Visual Studio Build operations
+/// Enables AI Agents to build, rebuild, and clean solutions/projects
 /// </summary>
 [McpServerToolType]
 public class BuildTools
@@ -124,7 +126,7 @@ public class BuildTools
             solutionBuild.Clean(true);
             
             _logger.LogInformation("Solution cleaned: {Config}/{Platform}", configuration, platform);
-            return OperationResult.IsSuccess("Solution cleaned successfully");
+            return OperationResult.Success("Solution cleaned successfully");
         }
         catch (Exception ex)
         {
@@ -258,7 +260,7 @@ public class BuildTools
     {
         foreach (Project project in solution.Projects)
         {
-            if (project.Name.Equals(projectName, System.StringComparison.OrdinalIgnoreCase))
+            if (project.Name.Equals(projectName, StringComparison.OrdinalIgnoreCase))
             {
                 return project;
             }

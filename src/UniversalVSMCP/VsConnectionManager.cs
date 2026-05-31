@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,11 @@ namespace UniversalVSMCP;
 /// <summary>
 /// Manages connection to Visual Studio via DTE (Development Tools Environment)
 /// Uses Running Object Table (ROT) to connect to running VS instances
+/// 
+/// Connection Flow:
+/// 1. Try to get active VS instance from ROT
+/// 2. If version specified, try to get specific version instance
+/// 3. Fallback to creating new instance via COM (requires VS to be running)
 /// </summary>
 public interface IVsConnectionManager
 {
@@ -51,7 +57,7 @@ public class VsConnectionManager : IVsConnectionManager, IDisposable
         try
         {
             // Try to get from Running Object Table (ROT)
-            // VS registers itself in ROT when running with /RootSuffix or automation mode
+            // VS registers itself in ROT when running
             var rotEntries = GetRunningObjectTableEntries();
             
             foreach (var entry in rotEntries)
@@ -166,6 +172,7 @@ public class VsConnectionManager : IVsConnectionManager, IDisposable
     {
         try
         {
+            // DTE.Version returns version like "17.0" for VS 2022, "18.0" for VS 2026
             return dte.Version ?? "Unknown";
         }
         catch
@@ -174,13 +181,13 @@ public class VsConnectionManager : IVsConnectionManager, IDisposable
         }
     }
 
-    private System.Collections.Generic.List<(string Key, object Value)> GetRunningObjectTableEntries()
+    private List<(string Key, object Value)> GetRunningObjectTableEntries()
     {
-        var entries = new System.Collections.Generic.List<(string, object)>();
+        var entries = new List<(string, object)>();
         
         try
         {
-            // Access Running Object Table via COM
+            // Try to access Running Object Table via COM
             // This requires stdole or similar COM interop
             Type? rotType = Type.GetTypeFromProgID("RunningObjectTable");
             if (rotType != null)
@@ -202,7 +209,7 @@ public class VsConnectionManager : IVsConnectionManager, IDisposable
         return entries;
     }
 
-    private void TryAddRotEntry(System.Collections.Generic.List<(string, object)> entries, string moniker)
+    private void TryAddRotEntry(List<(string, object)> entries, string moniker)
     {
         try
         {

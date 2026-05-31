@@ -11,6 +11,7 @@ namespace UniversalVSMCP;
 
 /// <summary>
 /// Tools for Visual Studio Solution operations
+/// Provides comprehensive solution management capabilities for AI Agents
 /// </summary>
 [McpServerToolType]
 public class SolutionTools
@@ -104,7 +105,7 @@ public class SolutionTools
         {
             dte.Solution.Open(solutionPath);
             _logger.LogInformation("Opened solution: {Path}", solutionPath);
-            return OperationResult.IsSuccess($"Solution opened: {System.IO.Path.GetFileName(solutionPath)}");
+            return OperationResult.Success($"Solution opened: {System.IO.Path.GetFileName(solutionPath)}");
         }
         catch (Exception ex)
         {
@@ -131,7 +132,7 @@ public class SolutionTools
         {
             dte.Solution.Close(false); // false = don't save changes
             _logger.LogInformation("Solution closed");
-            return OperationResult.IsSuccess("Solution closed successfully");
+            return OperationResult.Success("Solution closed successfully");
         }
         catch (Exception ex)
         {
@@ -220,19 +221,19 @@ public class ProjectInfo
 
 public class OperationResult
 {
-    public bool IsIsSuccess { get; set; }
+    public bool IsSuccess { get; set; }
     public string Message { get; set; } = string.Empty;
     public string? ErrorDetails { get; set; }
     
-    public static OperationResult IsSuccess(string message) => new OperationResult 
+    public static OperationResult Success(string message) => new OperationResult 
     { 
-        IsIsSuccess = true, 
+        IsSuccess = true, 
         Message = message 
     };
     
     public static OperationResult Failure(string message) => new OperationResult 
     { 
-        IsIsSuccess = false, 
+        IsSuccess = false, 
         Message = message 
     };
 }
