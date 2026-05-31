@@ -24,10 +24,10 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        Console.WriteLine("╔════════════════════════════════════════════════════════════════╗");
-        Console.WriteLine("║         UniversalVSMCP (UVM) - VS 2026/2022 MCP Server         ║");
-        Console.WriteLine("║                  AI Agent ↔ Visual Studio Bridge               ║");
-        Console.WriteLine("╚════════════════════════════════════════════════════════════════╝");
+        Console.WriteLine("============================================================");
+        Console.WriteLine("         UniversalVSMCP (UVM) - VS 2026/2022 MCP Server         ");
+        Console.WriteLine("                  AI Agent <-> Visual Studio Bridge               ");
+        Console.WriteLine("============================================================");
         
         await Host.CreateDefaultBuilder(args)
             .ConfigureServices((context, services) =>

@@ -1,11 +1,11 @@
 """
-VS 2026 MCP 配置示例
-将以下内容复制到 Visual Studio 的 .mcp.json 配置文件中
+VS 2026 MCP Configuration Templates
+Copy the JSON below into Visual Studio's .mcp.json configuration file
 """
 
 # ============================================================
-# 用户级配置（推荐）
-# 路径：%APPDATA%\VisualStudio\18.0\mcp.json
+# User-level configuration (recommended)
+# Path: %APPDATA%\VisualStudio\18.0\mcp.json
 # ============================================================
 
 USER_LEVEL_CONFIG = """{
@@ -27,8 +27,8 @@ USER_LEVEL_CONFIG = """{
 }"""
 
 # ============================================================
-# 方案级配置
-# 路径：<solution-root>/.mcp.json
+# Solution-level configuration
+# Path: <solution-root>/.mcp.json
 # ============================================================
 
 SOLUTION_LEVEL_CONFIG = """{
@@ -50,7 +50,7 @@ SOLUTION_LEVEL_CONFIG = """{
 }"""
 
 # ============================================================
-# .NET 版本配置（当 .NET SDK 发布后）
+# .NET version configuration (when .NET SDK is published)
 # ============================================================
 
 DOTNET_CONFIG = """{
@@ -70,7 +70,7 @@ DOTNET_CONFIG = """{
 }"""
 
 # ============================================================
-# 多服务器配置（同时使用多个 MCP 服务器）
+# Multi-server configuration (using multiple MCP servers simultaneously)
 # ============================================================
 
 MULTI_SERVER_CONFIG = """{
@@ -109,31 +109,30 @@ MULTI_SERVER_CONFIG = """{
 }"""
 
 # ============================================================
-# VS 2026 内配置步骤
+# VS 2026 internal configuration steps
 # ============================================================
 
 VS2026_SETUP_STEPS = """
-1. 打开 Visual Studio 2026
-2. 打开或创建一个解决方案 (.sln)
-3. 按下 Ctrl+Q，输入 "MCP: Open User Configuration"
-4. 在打开的 mcp.json 文件中粘贴配置
-5. 保存文件
-6. 在 VS 的 MCP 面板中找到 "universal-vsmcp" 并启用
-7. 重启 Visual Studio（如需要）
+1. Open Visual Studio 2026
+2. Open or create a solution (.sln)
+3. Press Ctrl+Q, type "MCP: Open User Configuration"
+4. Paste the JSON from 'mcp_config.vs_mcp_json_templates.user_level.template'
+5. Save the file
+6. Restart VS if needed, then enable the MCP server in the MCP panel
 """
 
 # ============================================================
-# Claude Desktop / Cursor 配置（外部 AI Agent）
+# Claude Desktop / Cursor configuration (external AI Agent)
 # ============================================================
 
 CLAUDE_DESKTOP_CONFIG = """
-Windows 路径：
+Windows path:
 %APPDATA%\\Claude\\claude_desktop_config.json
 
-macOS 路径：
+macOS path:
 ~/Library/Application Support/Claude/claude_desktop_config.json
 
-配置内容：
+Configuration:
 {
   "mcpServers": {
     "vsmcp": {
@@ -152,10 +151,10 @@ macOS 路径：
 """
 
 if __name__ == "__main__":
-    print("=== UniversalVSMCP 配置模板 ===\n")
-    print("1. 用户级配置（推荐）：")
+    print("=== UniversalVSMCP Configuration Templates ===\n")
+    print("1. User-level configuration (recommended):")
     print(USER_LEVEL_CONFIG)
-    print("\n2. 方案级配置：")
+    print("\n2. Solution-level configuration:")
     print(SOLUTION_LEVEL_CONFIG)
-    print("\n3. VS 2026 设置步骤：")
+    print("\n3. VS 2026 setup steps:")
     print(VS2026_SETUP_STEPS)
