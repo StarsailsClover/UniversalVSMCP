@@ -160,7 +160,7 @@ public class HttpMcpServer : IDisposable
         var serverInfo = new
         {
             name = "universal-vsmcp",
-            version = "26.0.0",
+            version = "26.0.2",
             capabilities = new { tools = new { listChanged = true } }
         };
         await SendSseEvent(outputStream, "server-info", JsonSerializer.Serialize(serverInfo, _jsonOptions));
@@ -220,7 +220,7 @@ public class HttpMcpServer : IDisposable
         var info = new
         {
             name = "universal-vsmcp",
-            version = "26.0.0",
+            version = "26.0.2",
             description = "MCP Server for Visual Studio 2026/2022 automation via DTE/OM",
             transport = "http-sse",
             endpoints = new

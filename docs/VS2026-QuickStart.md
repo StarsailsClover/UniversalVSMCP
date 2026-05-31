@@ -241,5 +241,5 @@ universal-vsmcp --help
 ---
 
 **配置完成！** 现在你可以在 VS 2026 MCP Server Manager 中看到 UniversalVSMCP 已连接。  
-**版本**: v26.0.0  
+**版本**: v26.0.2  
 **最后更新**: 2026-05-31

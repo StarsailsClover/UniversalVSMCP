@@ -37,7 +37,7 @@ public class Program
     public static async Task<int> Main(string[] args)
     {
         Console.WriteLine("=================================================================");
-        Console.WriteLine("         UniversalVSMCP (UVM) v26.0.0-20260531-UVM - VS 2026/2022 MCP Server         ");
+        Console.WriteLine("         UniversalVSMCP (UVM) v26.0.2-20260531-UVM - VS 2026/2022 MCP Server         ");
         Console.WriteLine("                  AI Agent <-> Visual Studio Bridge               ");
         Console.WriteLine("=================================================================");
         
