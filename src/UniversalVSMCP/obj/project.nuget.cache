@@ -1,0 +1,84 @@
+{
+  "version": 2,
+  "dgSpecHash": "FqNPK2UvXMU=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Sails\\.nuget\\packages\\envdte\\17.11.40262\\envdte.17.11.40262.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\envdte80\\17.11.40262\\envdte80.17.11.40262.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.ai.abstractions\\9.6.0\\microsoft.extensions.ai.abstractions.9.6.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.configuration\\8.0.0\\microsoft.extensions.configuration.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\8.0.0\\microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.configuration.binder\\8.0.0\\microsoft.extensions.configuration.binder.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.configuration.commandline\\8.0.0\\microsoft.extensions.configuration.commandline.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.configuration.environmentvariables\\8.0.0\\microsoft.extensions.configuration.environmentvariables.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.configuration.fileextensions\\8.0.0\\microsoft.extensions.configuration.fileextensions.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.configuration.json\\8.0.0\\microsoft.extensions.configuration.json.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.configuration.usersecrets\\8.0.0\\microsoft.extensions.configuration.usersecrets.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\8.0.0\\microsoft.extensions.dependencyinjection.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.2\\microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.diagnostics\\8.0.0\\microsoft.extensions.diagnostics.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.diagnostics.abstractions\\8.0.1\\microsoft.extensions.diagnostics.abstractions.8.0.1.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\8.0.0\\microsoft.extensions.fileproviders.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.fileproviders.physical\\8.0.0\\microsoft.extensions.fileproviders.physical.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.filesystemglobbing\\8.0.0\\microsoft.extensions.filesystemglobbing.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.hosting\\8.0.0\\microsoft.extensions.hosting.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.hosting.abstractions\\8.0.1\\microsoft.extensions.hosting.abstractions.8.0.1.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.logging\\8.0.0\\microsoft.extensions.logging.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.3\\microsoft.extensions.logging.abstractions.8.0.3.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.logging.configuration\\8.0.0\\microsoft.extensions.logging.configuration.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.logging.console\\8.0.0\\microsoft.extensions.logging.console.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.logging.debug\\8.0.0\\microsoft.extensions.logging.debug.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.logging.eventlog\\8.0.0\\microsoft.extensions.logging.eventlog.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.logging.eventsource\\8.0.0\\microsoft.extensions.logging.eventsource.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.options\\8.0.2\\microsoft.extensions.options.8.0.2.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\8.0.0\\microsoft.extensions.options.configurationextensions.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.visualstudio.interop\\17.11.40262\\microsoft.visualstudio.interop.17.11.40262.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\modelcontextprotocol\\0.3.0-preview.1\\modelcontextprotocol.0.3.0-preview.1.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\modelcontextprotocol.core\\0.3.0-preview.1\\modelcontextprotocol.core.0.3.0-preview.1.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\system.diagnostics.eventlog\\8.0.0\\system.diagnostics.eventlog.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\system.io.pipelines\\8.0.0\\system.io.pipelines.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\system.net.serversentevents\\10.0.0-preview.4.25258.110\\system.net.serversentevents.10.0.0-preview.4.25258.110.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "UniversalVSMCP 依赖于 envdte (>= 17.11.4000)，但没有找到 envdte 17.11.4000。已改为解析 envdte 17.11.40262。",
+      "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "libraryId": "envdte",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "UniversalVSMCP 依赖于 envdte80 (>= 17.11.4000)，但没有找到 envdte80 17.11.4000。已改为解析 envdte80 17.11.40262。",
+      "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "libraryId": "envdte80",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "UniversalVSMCP 依赖于 ModelContextProtocol (>= 0.3.0-preview)，但没有找到 ModelContextProtocol 0.3.0-preview。已改为解析 ModelContextProtocol 0.3.0-preview.1。",
+      "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\AgentWorkspace\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "libraryId": "ModelContextProtocol",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "universal-vsmcp"
+version = "1.0.0"
+description = "MCP Server for Visual Studio 2026/2022 automation via DTE"
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "StarsailsClover", email = "contact@starsailsclover.dev" }
+]
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.optional-dependencies]
+mcp-server = [
+    "mcp>=1.0.0",
+    "uvicorn>=0.30.0",
+]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+]
+
+[project.scripts]
+universal-vsmcp = "universal_vsmcp.server:main"
+
+[project.urls]
+Homepage = "https://github.com/StarsailsClover/UniversalVSMCP"
+Repository = "https://github.com/StarsailsClover/UniversalVSMCP"
+Documentation = "https://github.com/StarsailsClover/UniversalVSMCP#readme"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/universal_vsmcp"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "README.md",
+    "LICENSE",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+]

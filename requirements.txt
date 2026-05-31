@@ -1,0 +1,8 @@
+# UniversalVSMCP 依赖
+mcp>=1.0.0
+uvicorn>=0.30.0
+pywin32>=305; sys_platform == "win32"
+
+# 开发依赖
+pytest>=8.0.0
+pytest-asyncio>=0.23.0

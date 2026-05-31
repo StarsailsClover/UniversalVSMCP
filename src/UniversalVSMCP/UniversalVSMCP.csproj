@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    
+    <!-- MCP Server Configuration -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>universal-vsmcp</ToolCommandName>
+    
+    <!-- Package Info -->
+    <PackageId>UniversalVSMCP</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>StarsailsClover</Authors>
+    <Description>MCP Server for Visual Studio 2026/2022 automation via DTE/OM</Description>
+    <PackageTags>mcp;visual-studio;dte;automation;dotnet</PackageTags>
+    <PackageProjectUrl>https://github.com/StarsailsClover/UniversalVSMCP</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    
+    <!-- Output -->
+    <OutputPath>bin\$(Configuration)\net8.0\</OutputPath>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Microsoft MCP SDK -->
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+    <PackageReference Include="ModelContextProtocol" Version="0.3.0-preview" />
+    
+    <!-- Visual Studio Automation -->
+    <PackageReference Include="EnvDTE" Version="17.11.4000" />
+    <PackageReference Include="EnvDTE80" Version="17.11.4000" />
+    
+    <!-- JSON and Utilities -->
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\server.json" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

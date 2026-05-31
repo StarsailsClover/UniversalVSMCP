@@ -1,0 +1,5 @@
+C:\Users\Sails\Documents\Workspace\AgentWorkspace\UniversalVSMCP\src\UniversalVSMCP\obj\Release\net8.0\UniversalVSMCP.csproj.AssemblyReference.cache
+C:\Users\Sails\Documents\Workspace\AgentWorkspace\UniversalVSMCP\src\UniversalVSMCP\obj\Release\net8.0\UniversalVSMCP.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Sails\Documents\Workspace\AgentWorkspace\UniversalVSMCP\src\UniversalVSMCP\obj\Release\net8.0\UniversalVSMCP.AssemblyInfoInputs.cache
+C:\Users\Sails\Documents\Workspace\AgentWorkspace\UniversalVSMCP\src\UniversalVSMCP\obj\Release\net8.0\UniversalVSMCP.AssemblyInfo.cs
+C:\Users\Sails\Documents\Workspace\AgentWorkspace\UniversalVSMCP\src\UniversalVSMCP\obj\Release\net8.0\UniversalVSMCP.csproj.CoreCompileInputs.cache
