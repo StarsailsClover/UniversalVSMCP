@@ -7,28 +7,29 @@ using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
-using UniversalVSMCP;
+using UniversalVSMCP.IdeAbstraction;
+using UniversalVSMCP.IdeAdapters;
+using UniversalVSMCP.IdeRouting;
+using UniversalVSMCP.Tools;
+using UniversalVSMCP.Security;
 
 namespace UniversalVSMCP;
 
 /// <summary>
-/// UniversalVSMCP (UVM) - MCP Server for Visual Studio 2026/2022
-/// Bridges AI Agents to Visual Studio via DTE/OM
+/// UniversalVSMCP (UVM) v26.0.3 - Unified MCP Server for Visual Studio and VS Code
+/// 
+/// Architecture: AI Agent → MCP → IdeRouter → IIdeAdapter → VS/VS Code
 /// 
 /// Transport Modes:
-///   --stdio                    # Standard input/output (default)
-///   --http [port]              # HTTP/SSE mode on port (default: 5000)
-///   --hybrid                   # Both stdio and HTTP
+///   --stdio                    # Standard input/output
+///   --http [port]              # HTTP/SSE mode
+///   --hybrid                   # Both modes
 /// 
-/// VS 2026 Configuration:
-///   URL: http://localhost:5000/sse
-/// 
-/// Usage:
-///   universal-vsmcp --stdio                    # stdio transport
-///   universal-vsmcp --http 5000                # HTTP on port 5000
-///   universal-vsmcp --hybrid                 # Both modes
-///   universal-vsmcp --verify                 # Verify VS connection
-///   universal-vsmcp --help                   # Show help
+/// Features:
+///   - Multi-IDE support (VS 2022/2026, VS Code)
+///   - Unified IIdeAdapter interface
+///   - Smart routing between IDEs
+///   - Security framework (Trust, Permission, Audit)
 /// </summary>
 public class Program
 {
@@ -36,64 +37,41 @@ public class Program
     
     public static async Task<int> Main(string[] args)
     {
-        Console.WriteLine("=================================================================");
-        Console.WriteLine("         UniversalVSMCP (UVM) v26.0.2-20260531-UVM - VS 2026/2022 MCP Server         ");
-        Console.WriteLine("                  AI Agent <-> Visual Studio Bridge               ");
-        Console.WriteLine("=================================================================");
+        PrintBanner();
         
         var config = ParseArgs(args);
         
-        // Handle verify command
-        if (config.Verify)
-        {
-            return await VerifyConnectionAsync(config);
-        }
-
-        // Show help
         if (config.ShowHelp)
         {
             ShowHelp();
             return 0;
         }
 
-        Console.WriteLine($"Transport:  {config.TransportMode}");
-        if (config.TransportMode == TransportMode.Http || config.TransportMode == TransportMode.Hybrid)
+        if (config.Verify)
         {
-            Console.WriteLine($"HTTP Port:  {config.HttpPort}");
-            Console.WriteLine($"VS 2026 URL: http://localhost:{config.HttpPort}/sse");
+            return await VerifyConnectionAsync(config);
         }
-        Console.WriteLine($"VS Target:  {config.VsVersion ?? "Auto-detect latest instance"}");
-        Console.WriteLine($"Log File:   {config.LogFile ?? "console only"}");
-        Console.WriteLine();
 
         try
         {
-            // Build host based on transport mode
             var host = BuildHost(config);
             
-            // Start stdio mode
+            // Initialize IDE adapters
+            await InitializeIdeAdapters(host, config);
+            
+            // Start transports
             if (config.TransportMode == TransportMode.Stdio || config.TransportMode == TransportMode.Hybrid)
             {
-                Console.WriteLine("Starting stdio transport...");
-                _ = host.RunAsync();
+                await host.RunAsync();
             }
-            
-            // Start HTTP mode
-            if (config.TransportMode == TransportMode.Http || config.TransportMode == TransportMode.Hybrid)
+            else if (config.TransportMode == TransportMode.Http)
             {
-                Console.WriteLine($"Starting HTTP transport on port {config.HttpPort}...");
                 await StartHttpServerAsync(host, config.HttpPort);
             }
-            
-            // Keep running
-            if (config.TransportMode == TransportMode.Http)
+            else if (config.TransportMode == TransportMode.Hybrid)
             {
-                Console.WriteLine("\nPress Ctrl+C to stop the server.");
-                await Task.Delay(Timeout.Infinite);
-            }
-            else
-            {
-                await host.RunAsync();
+                _ = host.RunAsync();
+                await StartHttpServerAsync(host, config.HttpPort);
             }
             
             return 0;
@@ -106,26 +84,59 @@ public class Program
         }
     }
 
+    private static void PrintBanner()
+    {
+        Console.WriteLine("=================================================================");
+        Console.WriteLine("     UniversalVSMCP (UVM) v26.0.3 - Unified MCP Server");
+        Console.WriteLine("        AI Agent ↔ VS 2022/2026 | VS Code Bridge");
+        Console.WriteLine("=================================================================");
+    }
+
     /// <summary>
-    /// Build host based on configuration
+    /// Build host with unified architecture
     /// </summary>
     private static IHost BuildHost(ServerConfig config)
     {
         return Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>
             {
-                // Register VS Connection Manager (Singleton for DTE reuse)
-                services.AddSingleton<IVsConnectionManager, VsConnectionManager>();
+                // Core services
+                services.AddSingleton<OperationAuditor>();
+                services.AddSingleton<WorkspaceTrustManager>();
+                services.AddSingleton<UserConfirmationManager>();
+                services.AddSingleton<ToolPermissionManager>();
+                services.AddSingleton<PromptInjectionDetector>();
                 
-                // Register tools
-                services.AddSingleton<SolutionTools>();
-                services.AddSingleton<ProjectTools>();
-                services.AddSingleton<FileTools>();
-                services.AddSingleton<BuildTools>();
-                services.AddSingleton<DebugTools>();
-                services.AddSingleton<DiagnosticTools>();
+                // IDE Routing
+                services.AddSingleton<IdeRouter>(sp => 
+                {
+                    var logger = sp.GetRequiredService<ILogger<IdeRouter>>();
+                    return new IdeRouter(logger, RoutingStrategy.Auto);
+                });
                 
-                // Configure logging
+                // IDE Adapters (registered as singletons, but not connected until needed)
+                services.AddSingleton<VsDteAdapter>(sp => 
+                {
+                    var logger = sp.GetRequiredService<ILogger<VsDteAdapter>>();
+                    return new VsDteAdapter(logger);
+                });
+                
+                services.AddSingleton<VsCodeAdapter>(sp => 
+                {
+                    var logger = sp.GetRequiredService<ILogger<VsCodeAdapter>>();
+                    return new VsCodeAdapter(logger);
+                });
+                
+                // HTTP Server
+                services.AddSingleton<HttpMcpServer>(sp => 
+                {
+                    var logger = sp.GetRequiredService<ILogger<HttpMcpServer>>();
+                    var router = sp.GetRequiredService<IdeRouter>();
+                    var tools = sp.GetServices<McpServerTool>();
+                    return new HttpMcpServer(logger, router, tools);
+                });
+                
+                // Logging
                 services.AddLogging(builder =>
                 {
                     builder.AddConsole();
@@ -135,7 +146,7 @@ public class Program
                     }
                 });
                 
-                // Register MCP Server for stdio mode
+                // MCP Server with unified tools
                 if (config.TransportMode == TransportMode.Stdio || config.TransportMode == TransportMode.Hybrid)
                 {
                     services.AddMcpServer(options =>
@@ -143,14 +154,14 @@ public class Program
                         options.ServerInfo = new ServerInfo
                         {
                             Name = "universal-vsmcp",
-                            Version = "26.0.0"
+                            Version = "26.0.3"
                         };
                     })
                     .WithTools<SolutionTools>()
-                    .WithTools<ProjectTools>()
-                    .WithTools<FileTools>()
                     .WithTools<BuildTools>()
                     .WithTools<DebugTools>()
+                    .WithTools<FileTools>()
+                    .WithTools<ProjectTools>()
                     .WithTools<DiagnosticTools>();
                 }
             })
@@ -158,138 +169,125 @@ public class Program
     }
 
     /// <summary>
+    /// Initialize IDE adapters and register with router
+    /// </summary>
+    private static async Task InitializeIdeAdapters(IHost host, ServerConfig config)
+    {
+        var router = host.Services.GetRequiredService<IdeRouter>();
+        var vsAdapter = host.Services.GetRequiredService<VsDteAdapter>();
+        var vscodeAdapter = host.Services.GetRequiredService<VsCodeAdapter>();
+        var logger = host.Services.GetRequiredService<ILogger<Program>>();
+        
+        // Register adapters
+        router.RegisterAdapter("vs2022", vsAdapter);
+        router.RegisterAdapter("vscode", vscodeAdapter);
+        
+        // Set default based on config or auto-detect
+        if (config.VsVersion?.StartsWith("17") == true || config.VsVersion?.StartsWith("18") == true)
+        {
+            router.SetDefaultAdapter("vs2022");
+            logger.LogInformation("Default IDE set to Visual Studio");
+        }
+        else
+        {
+            // Try to auto-connect to preferred IDE
+            logger.LogInformation("Auto-detecting IDE...");
+            
+            // Try VS first for .sln files
+            if (!string.IsNullOrEmpty(config.SolutionPath) && config.SolutionPath.EndsWith(".sln"))
+            {
+                router.SetDefaultAdapter("vs2022");
+            }
+            else
+            {
+                // Prefer VS Code for general use
+                router.SetDefaultAdapter("vscode");
+            }
+        }
+        
+        // Auto-connect if solution provided
+        if (!string.IsNullOrEmpty(config.SolutionPath))
+        {
+            var criteria = new RoutingCriteria
+            {
+                SolutionPath = config.SolutionPath,
+                AutoDiscover = true
+            };
+            
+            logger.LogInformation("Connecting to IDE for solution: {Path}", config.SolutionPath);
+            var result = await router.ConnectAsync(criteria);
+            
+            if (result.Success)
+            {
+                logger.LogInformation("Connected to {IdeName} (Instance: {InstanceId})",
+                    result.Adapter?.IdeName, result.InstanceId);
+            }
+            else
+            {
+                logger.LogWarning("Failed to connect to IDE: {Error}", result.ErrorMessage);
+            }
+        }
+        
+        await Task.CompletedTask;
+    }
+
+    /// <summary>
     /// Start HTTP server
     /// </summary>
     private static async Task StartHttpServerAsync(IHost host, int port)
     {
-        var logger = host.Services.GetRequiredService<ILogger<HttpMcpServer>>();
-        var vsManager = host.Services.GetRequiredService<IVsConnectionManager>();
+        var logger = host.Services.GetRequiredService<ILogger<Program>>();
+        var httpServer = host.Services.GetRequiredService<HttpMcpServer>();
         
-        // Get all tools
-        var tools = new List<McpServerTool>();
-        tools.AddRange(GetToolDefinitions<SolutionTools>());
-        tools.AddRange(GetToolDefinitions<ProjectTools>());
-        tools.AddRange(GetToolDefinitions<FileTools>());
-        tools.AddRange(GetToolDefinitions<BuildTools>());
-        tools.AddRange(GetToolDefinitions<DebugTools>());
-        tools.AddRange(GetToolDefinitions<DiagnosticTools>());
-        
-        _httpServer = new HttpMcpServer(logger, vsManager, tools);
-        await _httpServer.StartAsync(port);
+        logger.LogInformation("Starting HTTP server on port {Port}...", port);
+        await httpServer.StartAsync(port);
         
         Console.WriteLine($"\n✓ HTTP Server ready at: http://localhost:{port}/sse");
         Console.WriteLine($"✓ Health check:       http://localhost:{port}/health");
         Console.WriteLine($"✓ Server info:        http://localhost:{port}/info");
         Console.WriteLine($"✓ Tools list:         http://localhost:{port}/tools");
-    }
-
-    /// <summary>
-    /// Get tool definitions from type
-    /// </summary>
-    private static IEnumerable<McpServerTool> GetToolDefinitions<T>() where T : class
-    {
-        var type = typeof(T);
-        var methods = type.GetMethods();
+        Console.WriteLine("\nPress Ctrl+C to stop the server.");
         
-        foreach (var method in methods)
-        {
-            var attr = method.GetCustomAttributes(typeof(McpServerToolAttribute), false)
-                .Cast<McpServerToolAttribute>()
-                .FirstOrDefault();
-            
-            if (attr != null)
-            {
-                yield return new McpServerTool
-                {
-                    Name = attr.Name,
-                    Description = attr.Title,
-                    InputSchema = GenerateInputSchema(method),
-                    OutputSchema = GenerateOutputSchema(method)
-                };
-            }
-        }
+        await Task.Delay(Timeout.Infinite);
     }
 
     /// <summary>
-    /// Generate JSON schema for method parameters
-    /// </summary>
-    private static object GenerateInputSchema(System.Reflection.MethodInfo method)
-    {
-        // Simplified schema generation
-        var properties = new Dictionary<string, object>();
-        var required = new List<string>();
-        
-        foreach (var param in method.GetParameters())
-        {
-            if (param.Name == "ct" || param.Name == "cancellationToken") continue;
-            
-            properties[param.Name!] = new
-            {
-                type = GetJsonType(param.ParameterType),
-                description = $"Parameter {param.Name}"
-            };
-            
-            if (!param.IsOptional && !param.HasDefaultValue)
-            {
-                required.Add(param.Name!);
-            }
-        }
-        
-        return new
-        {
-            type = "object",
-            properties,
-            required
-        };
-    }
-
-    /// <summary>
-    /// Generate JSON schema for return type
-    /// </summary>
-    private static object GenerateOutputSchema(System.Reflection.MethodInfo method)
-    {
-        return new
-        {
-            type = "object",
-            description = $"Return type: {method.ReturnType.Name}"
-        };
-    }
-
-    /// <summary>
-    /// Get JSON type from CLR type
-    /// </summary>
-    private static string GetJsonType(Type type)
-    {
-        if (type == typeof(string)) return "string";
-        if (type == typeof(int) || type == typeof(long)) return "integer";
-        if (type == typeof(bool)) return "boolean";
-        if (type == typeof(double) || type == typeof(float) || type == typeof(decimal)) return "number";
-        if (type.IsArray || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))) return "array";
-        return "object";
-    }
-
-    /// <summary>
-    /// Verify VS connection
+    /// Verify IDE connection
     /// </summary>
     private static async Task<int> VerifyConnectionAsync(ServerConfig config)
     {
-        Console.WriteLine("Verifying Visual Studio connection...\n");
+        Console.WriteLine("Verifying IDE connection...\n");
         
         var host = BuildHost(config);
-        var vsManager = host.Services.GetRequiredService<IVsConnectionManager>();
+        var router = host.Services.GetRequiredService<IdeRouter>();
         
-        var connected = await vsManager.ConnectAsync(config.VsVersion);
+        // Try to connect
+        var criteria = new RoutingCriteria 
+        { 
+            AutoDiscover = true,
+            Timeout = TimeSpan.FromSeconds(10)
+        };
         
-        if (connected)
+        var result = await router.ConnectAsync(criteria);
+        
+        if (result.Success && result.Adapter != null)
         {
-            Console.WriteLine("✓ Visual Studio connection successful!");
-            Console.WriteLine($"  Version: {vsManager.ConnectedVersion}");
+            Console.WriteLine($"✓ Connected to: {result.Adapter.IdeName} {result.Adapter.IdeVersion}");
+            Console.WriteLine($"  Instance ID: {result.InstanceId}");
+            
+            var solution = await result.Adapter.GetSolutionAsync();
+            if (solution?.IsOpen == true)
+            {
+                Console.WriteLine($"  Solution: {solution.Name}");
+                Console.WriteLine($"  Projects: {solution.ProjectCount}");
+            }
+            
             return 0;
         }
         else
         {
-            Console.WriteLine("✗ Visual Studio connection failed!");
-            Console.WriteLine("  Make sure Visual Studio is running with a solution open.");
+            Console.WriteLine($"✗ Connection failed: {result.ErrorMessage}");
+            Console.WriteLine("  Make sure VS or VS Code is running with a solution open.");
             return 1;
         }
     }
@@ -327,10 +325,10 @@ public class Program
                     }
                     break;
                     
-                case "--log-file":
+                case "--solution":
                     if (i + 1 < args.Length)
                     {
-                        config.LogFile = args[i + 1];
+                        config.SolutionPath = args[i + 1];
                         i++;
                     }
                     break;
@@ -339,6 +337,14 @@ public class Program
                     if (i + 1 < args.Length)
                     {
                         config.VsVersion = args[i + 1];
+                        i++;
+                    }
+                    break;
+                    
+                case "--log-file":
+                    if (i + 1 < args.Length)
+                    {
+                        config.LogFile = args[i + 1];
                         i++;
                     }
                     break;
@@ -363,43 +369,120 @@ public class Program
     private static void ShowHelp()
     {
         Console.WriteLine(@"
-UniversalVSMCP (UVM) - MCP Server for Visual Studio 2026/2022
+UniversalVSMCP (UVM) - Unified MCP Server for Visual Studio and VS Code
 
 USAGE:
     universal-vsmcp [OPTIONS]
 
 OPTIONS:
     --stdio                    Run in stdio mode (default)
-    --http [PORT]              Run in HTTP/SSE mode (default port: 5000)
-    --hybrid [PORT]            Run both stdio and HTTP modes
+    --http [PORT]              Run HTTP server on port (default: 5000)
+    --hybrid [PORT]            Run both stdio and HTTP
+    --solution <PATH>          Open specific solution/workspace
+    --vs-version <VERSION>     Target specific VS version (17.x, 18.x)
     --log-file <PATH>          Write logs to file
-    --vs-version <VERSION>     Target specific VS version
-    --verify                   Verify VS connection
+    --verify                   Verify IDE connection
     --help, -h                 Show this help
-
-VS 2026 CONFIGURATION:
-    For VS 2026 MCP Server Manager, use:
-        Name: universal-vsmcp
-        URL:  http://localhost:5000/sse
 
 EXAMPLES:
     # Stdio mode (for Claude/Cursor)
     universal-vsmcp --stdio
 
-    # HTTP mode (for VS 2026)
+    # HTTP mode (for VS Code or VS 2026 MCP Manager)
     universal-vsmcp --http 5000
 
     # Hybrid mode (both)
-    universal-vsmcp --hybrid
+    universal-vsmcp --hybrid 5000 --solution C:\Projects\MyApp.sln
 
-ENDPOINTS:
-    GET  /sse        - SSE endpoint for MCP (primary)
+    # Verify connection
+    universal-vsmcp --verify
+
+ENDPOINTS (HTTP mode):
+    GET  /sse        - SSE endpoint for MCP
     GET  /health     - Health check
-    GET  /info       - Server info
+    GET  /info       - Server information
     GET  /tools      - List available tools
     POST /tools/call - Call a tool
+
+SUPPORTED IDEs:
+    - Visual Studio 2022 (v17.x)
+    - Visual Studio 2026 (v18.x)
+    - VS Code (v1.90+)
 
 For more information: https://github.com/StarsailsClover/UniversalVSMCP
 ");
     }
+}
+
+/// <summary>
+/// Server configuration
+/// </summary>
+public class ServerConfig
+{
+    public TransportMode TransportMode { get; set; } = TransportMode.Stdio;
+    public int HttpPort { get; set; } = 5000;
+    public string? SolutionPath { get; set; }
+    public string? VsVersion { get; set; }
+    public string? LogFile { get; set; }
+    public bool Verify { get; set; }
+    public bool ShowHelp { get; set; }
+}
+
+/// <summary>
+/// File logger provider
+/// </summary>
+public class FileLoggerProvider : ILoggerProvider
+{
+    private readonly string _logFile;
+    
+    public FileLoggerProvider(string logFile)
+    {
+        _logFile = logFile;
+    }
+    
+    public ILogger CreateLogger(string categoryName)
+    {
+        return new FileLogger(_logFile);
+    }
+    
+    public void Dispose() { }
+}
+
+/// <summary>
+/// File logger
+/// </summary>
+public class FileLogger : ILogger
+{
+    private readonly string _logFile;
+    private readonly object _lock = new();
+    
+    public FileLogger(string logFile)
+    {
+        _logFile = logFile;
+    }
+    
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+    
+    public bool IsEnabled(LogLevel logLevel) => true;
+    
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    {
+        var message = formatter(state, exception);
+        var line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{logLevel}] {message}";
+        
+        lock (_lock)
+        {
+            File.AppendAllText(_logFile, line + Environment.NewLine);
+        }
+    }
+}
+
+/// <summary>
+/// Transport modes
+/// </summary>
+public enum TransportMode
+{
+    Stdio,
+    Http,
+    Hybrid
 }
