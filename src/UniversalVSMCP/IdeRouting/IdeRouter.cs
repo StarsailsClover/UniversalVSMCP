@@ -132,11 +132,19 @@ public class IdeRouter
     }
 
     /// <summary>
-    /// Get the current solution information from the best available IDE
+    /// Get the best adapter based on routing criteria
+    /// </summary>
+    public async Task<IIdeAdapter?> GetAdapterAsync(RoutingCriteria criteria)
+    {
+        return await SelectAdapterAsync(criteria);
+    }
+
+    /// <summary>
+    /// Get solution from the best available IDE
     /// </summary>
     public async Task<SolutionInfo?> GetSolutionAsync(RoutingCriteria? criteria = null)
     {
-        var adapter = await SelectAdapterAsync(criteria ?? new RoutingCriteria());
+        var adapter = await GetAdapterAsync(criteria ?? new RoutingCriteria());
         if (adapter == null)
         {
             _logger.LogWarning("No IDE adapter available for GetSolution");
@@ -147,55 +155,113 @@ public class IdeRouter
     }
 
     /// <summary>
-    /// Execute a build operation on the appropriate IDE
+    /// Open solution in the best IDE
+    /// </summary>
+    public async Task<bool> OpenSolutionAsync(string solutionPath)
+    {
+        var criteria = new RoutingCriteria { SolutionPath = solutionPath };
+        var adapter = await GetAdapterAsync(criteria);
+        if (adapter == null)
+        {
+            _logger.LogWarning("No IDE adapter available for OpenSolution");
+            return false;
+        }
+
+        return await adapter.OpenSolutionAsync(solutionPath);
+    }
+
+    /// <summary>
+    /// Close solution in the best IDE
+    /// </summary>
+    public async Task<bool> CloseSolutionAsync()
+    {
+        var adapter = await GetAdapterAsync(new RoutingCriteria());
+        if (adapter == null)
+        {
+            _logger.LogWarning("No IDE adapter available for CloseSolution");
+            return false;
+        }
+
+        return await adapter.CloseSolutionAsync();
+    }
+
+    /// <summary>
+    /// Create solution in the best IDE
+    /// </summary>
+    public async Task<SolutionInfo?> CreateSolutionAsync(string path, string template)
+    {
+        var adapter = await GetAdapterAsync(new RoutingCriteria());
+        if (adapter == null)
+        {
+            _logger.LogWarning("No IDE adapter available for CreateSolution");
+            return null;
+        }
+
+        return await adapter.CreateSolutionAsync(path, template);
+    }
+
+    /// <summary>
+    /// Get projects from the best IDE
+    /// </summary>
+    public async Task<IReadOnlyList<ProjectInfo>> GetProjectsAsync()
+    {
+        var adapter = await GetAdapterAsync(new RoutingCriteria());
+        if (adapter == null)
+        {
+            _logger.LogWarning("No IDE adapter available for GetProjects");
+            return Array.Empty<ProjectInfo>();
+        }
+
+        return await adapter.GetProjectsAsync();
+    }
+
+    /// <summary>
+    /// Get startup project from the best IDE
+    /// </summary>
+    public async Task<ProjectInfo?> GetStartupProjectAsync()
+    {
+        var adapter = await GetAdapterAsync(new RoutingCriteria());
+        if (adapter == null)
+        {
+            _logger.LogWarning("No IDE adapter available for GetStartupProject");
+            return null;
+        }
+
+        return await adapter.GetStartupProjectAsync();
+    }
+
+    /// <summary>
+    /// Set startup project in the best IDE
+    /// </summary>
+    public async Task<bool> SetStartupProjectAsync(string projectName)
+    {
+        var adapter = await GetAdapterAsync(new RoutingCriteria());
+        if (adapter == null)
+        {
+            _logger.LogWarning("No IDE adapter available for SetStartupProject");
+            return false;
+        }
+
+        return await adapter.SetStartupProjectAsync(projectName);
+    }
+
+    /// <summary>
+    /// Build solution in the best IDE
     /// </summary>
     public async Task<BuildResult> BuildSolutionAsync(RoutingCriteria? criteria = null, BuildConfiguration? config = null)
     {
-        var adapter = await SelectAdapterAsync(criteria ?? new RoutingCriteria { PreferBuildSupport = true });
+        var adapter = await GetAdapterAsync(criteria ?? new RoutingCriteria { PreferBuildSupport = true });
         if (adapter == null)
         {
-            return new BuildResult
-            {
-                Success = false,
-                Output = "No IDE adapter available for build"
-            };
+            _logger.LogWarning("No IDE adapter available for BuildSolution");
+            return new BuildResult { Success = false, Output = "No IDE available" };
         }
 
         return await adapter.BuildSolutionAsync(config);
     }
 
     /// <summary>
-    /// Start debugging on the appropriate IDE
-    /// </summary>
-    public async Task<bool> StartDebuggingAsync(RoutingCriteria? criteria = null, DebugTarget? target = null)
-    {
-        var adapter = await SelectAdapterAsync(criteria ?? new RoutingCriteria { PreferDebugSupport = true });
-        if (adapter == null)
-        {
-            _logger.LogWarning("No IDE adapter available for debugging");
-            return false;
-        }
-
-        return await adapter.StartDebuggingAsync(target);
-    }
-
-    /// <summary>
-    /// Open a file in the appropriate IDE
-    /// </summary>
-    public async Task<bool> OpenFileAsync(string filePath, RoutingCriteria? criteria = null)
-    {
-        var adapter = await SelectAdapterAsync(criteria ?? new RoutingCriteria { FilePath = filePath });
-        if (adapter == null)
-        {
-            _logger.LogWarning("No IDE adapter available for opening file");
-            return false;
-        }
-
-        return await adapter.OpenFileAsync(filePath);
-    }
-
-    /// <summary>
-    /// Get all connected IDE information
+    /// Get all connected IDEs info
     /// </summary>
     public IReadOnlyList<IdeConnectionInfo> GetConnectedIdes()
     {
