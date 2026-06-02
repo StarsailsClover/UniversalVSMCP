@@ -87,7 +87,7 @@ public class Program
     private static void PrintBanner()
     {
         Console.WriteLine("=================================================================");
-        Console.WriteLine("     UniversalVSMCP (UVM) v26.0.3 - Unified MCP Server");
+        Console.WriteLine("     UniversalVSMCP (UVM) v26.2.0-RC1 - Unified MCP Server");
         Console.WriteLine("        AI Agent ↔ VS 2022/2026 | VS Code Bridge");
         Console.WriteLine("=================================================================");
     }

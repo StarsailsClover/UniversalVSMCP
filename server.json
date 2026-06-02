@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/docker/mcp-community-registry/main/docs/reference/server-json/draft/server.schema.json",
   "name": "universal-vsmcp",
-  "version": "26.0.2",
+  "version": "26.2.0-rc1",
   "description": "MCP Server for Visual Studio 2026/2022 automation via DTE/OM. Supports both stdio and HTTP/SSE transports for maximum compatibility.",
   "author": {
     "name": "StarsailsClover",
