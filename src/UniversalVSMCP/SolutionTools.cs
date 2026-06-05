@@ -7,6 +7,7 @@ using EnvDTE;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
+using UniversalVSMCP.IdeAbstraction;
 
 namespace UniversalVSMCP;
 
@@ -242,35 +243,6 @@ public class SolutionTools
 }
 
 #region Data Models
-
-public class ProjectInfo
-{
-    public string Name { get; set; } = string.Empty;
-    public string Kind { get; set; } = string.Empty;
-    public string KindName { get; set; } = string.Empty;
-    public string FullPath { get; set; } = string.Empty;
-    public string UniqueName { get; set; } = string.Empty;
-    public bool IsDirty { get; set; }
-    public string BuildState { get; set; } = string.Empty;
-}
-
-public class OperationResult
-{
-    public bool IsSuccess { get; set; }
-    public string Message { get; set; } = string.Empty;
-    public string? ErrorDetails { get; set; }
-    
-    public static OperationResult Success(string message) => new OperationResult 
-    { 
-        IsSuccess = true, 
-        Message = message 
-    };
-    
-    public static OperationResult Failure(string message) => new OperationResult 
-    { 
-        IsSuccess = false, 
-        Message = message 
-    };
-}
-
 #endregion
+
+

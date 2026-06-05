@@ -353,6 +353,13 @@ public class ProjectInfo
     public string Language { get; set; } = "";
     public bool IsStartupProject { get; set; }
     public IReadOnlyList<string> Files { get; set; } = Array.Empty<string>();
+    
+    // Additional properties from Tools.ProjectInfo
+    public string Kind { get; set; } = "";
+    public string KindName { get; set; } = "";
+    public string UniqueName { get; set; } = "";
+    public bool IsDirty { get; set; }
+    public string BuildState { get; set; } = "";
 }
 
 /// <summary>
@@ -383,10 +390,21 @@ public class BuildConfiguration
 public class BuildResult
 {
     public bool Success { get; set; }
+    public bool IsSuccess { get => Success; set => Success = value; }
+    public string? ProjectName { get; set; }
+    public string Configuration { get; set; } = string.Empty;
+    public string Platform { get; set; } = string.Empty;
+    public string? Operation { get; set; }
+    public string Output { get; set; } = string.Empty;
     public int ErrorCount { get; set; }
     public int WarningCount { get; set; }
-    public string Output { get; set; } = "";
     public TimeSpan Duration { get; set; }
+
+    public static BuildResult Failure(string message) => new()
+    {
+        Success = false,
+        Output = message
+    };
 }
 
 /// <summary>
@@ -478,4 +496,49 @@ public class DebugEventArgs : EventArgs
 {
     public string State { get; set; } = "";
     public DebugLocation? Location { get; set; }
+}
+/// <summary>
+/// Operation result
+/// </summary>
+public class OperationResult
+{
+    public bool IsSuccess { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public string? ErrorDetails { get; set; }
+    
+    public static OperationResult Success(string message) => new() 
+    { 
+        IsSuccess = true, 
+        Message = message 
+    };
+    
+    public static OperationResult Failure(string message) => new() 
+    { 
+        IsSuccess = false, 
+        Message = message 
+    };
+}
+
+/// <summary>
+/// Generic operation result
+/// </summary>
+public class OperationResult<T>
+{
+    public bool IsSuccess { get; set; }
+    public T? Value { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public string? ErrorDetails { get; set; }
+    
+    public static OperationResult<T> Success(T value, string message = "") => new() 
+    { 
+        IsSuccess = true, 
+        Value = value,
+        Message = message
+    };
+    
+    public static OperationResult<T> Failure(string message) => new() 
+    { 
+        IsSuccess = false, 
+        Message = message 
+    };
 }

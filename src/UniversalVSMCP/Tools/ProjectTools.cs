@@ -171,12 +171,6 @@ public class FileItem
     public long Size { get; set; }
 }
 
-public class OperationResult
-{
-    public bool Success { get; set; }
-    public string Message { get; set; } = "";
-}
-
 public class ProjectPropertiesResult
 {
     public bool Success { get; set; }

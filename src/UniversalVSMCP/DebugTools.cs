@@ -5,6 +5,7 @@ using EnvDTE80;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
+using UniversalVSMCP.IdeAbstraction;
 
 namespace UniversalVSMCP;
 
@@ -293,3 +294,6 @@ public class DebugStateResult
 }
 
 #endregion
+
+
+

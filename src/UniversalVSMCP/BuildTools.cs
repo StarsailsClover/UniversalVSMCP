@@ -6,6 +6,7 @@ using EnvDTE80;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
+using UniversalVSMCP.IdeAbstraction;
 
 namespace UniversalVSMCP;
 
@@ -298,23 +299,6 @@ public class BuildTools
 
 #region Data Models
 
-public class BuildResult
-{
-    public bool IsSuccess { get; set; }
-    public string? ProjectName { get; set; }
-    public string Configuration { get; set; } = string.Empty;
-    public string Platform { get; set; } = string.Empty;
-    public string? Operation { get; set; }
-    public string Output { get; set; } = string.Empty;
-    public int ErrorCount { get; set; }
-    
-    public static BuildResult Failure(string message) => new BuildResult 
-    { 
-        IsSuccess = false, 
-        Output = message 
-    };
-}
-
 public class BuildError
 {
     public string Description { get; set; } = string.Empty;
@@ -326,3 +310,5 @@ public class BuildError
 }
 
 #endregion
+
+

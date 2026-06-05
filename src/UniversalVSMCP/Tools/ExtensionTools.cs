@@ -23,7 +23,7 @@ public class ExtensionTools
     private Process? _extensionProcess;
 
     public ExtensionTools(
-        IdeRouter ideRouter, 
+        IdeRouter ideRouter,
         ILogger<ExtensionTools> logger,
         ConfigurationManager config)
     {
@@ -46,8 +46,8 @@ public class ExtensionTools
         {
             var serverPort = port ?? "5001";
             var config = npxConfig ?? "@modelcontextprotocol/server-vscode";
-            
-            _logger.LogInformation("Starting VS Code Extension MCP Server on port {Port} with config {Config}", 
+
+            _logger.LogInformation("Starting VS Code Extension MCP Server on port {Port} with config {Config}",
                 serverPort, config);
 
             // Check if already running
@@ -76,7 +76,7 @@ public class ExtensionTools
             };
 
             _extensionProcess = new Process { StartInfo = startInfo };
-            
+
             _extensionProcess.OutputDataReceived += (sender, e) =>
             {
                 if (!string.IsNullOrEmpty(e.Data))
@@ -84,7 +84,7 @@ public class ExtensionTools
                     _logger.LogInformation("[Extension Server] {Output}", e.Data);
                 }
             };
-            
+
             _extensionProcess.ErrorDataReceived += (sender, e) =>
             {
                 if (!string.IsNullOrEmpty(e.Data))
@@ -94,53 +94,32 @@ public class ExtensionTools
             };
 
             var started = _extensionProcess.Start();
-            
+
             if (started)
             {
                 _extensionProcess.BeginOutputReadLine();
                 _extensionProcess.BeginErrorReadLine();
-                
+
                 // Wait a moment for server to start
                 await Task.Delay(2000, ct);
-                
+
                 if (!_extensionProcess.HasExited)
                 {
                     _logger.LogInformation("VS Code Extension MCP Server started on port {Port}", serverPort);
-                    
+
                     // Generate connection URL
                     var connectionUrl = $"http://localhost:{serverPort}/sse";
-                    
+
                     return new ExtensionServerResult
                     {
                         Success = true,
-                        Message = $"VS Code Extension MCP Server started successfully",
+                        Message = "VS Code Extension MCP Server started successfully",
                         Port = serverPort,
                         Pid = _extensionProcess.Id,
                         IsRunning = true,
                         ConnectionUrl = connectionUrl,
                         NpxConfig = config,
-                        Instructions = $"""
-                            VS Code Extension MCP Server is running!
-                            
-                            Connection URL: {connectionUrl}
-                            
-                            To connect AI Agent:
-                            1. Configure your AI Agent (Claude/Cursor) with:
-                               {{
-                                 "mcpServers": {{
-                                   "vscode-extension": {{
-                                     "url": "{connectionUrl}",
-                                     "transport": "sse"
-                                   }}
-                                 }}
-                               }}
-                            
-                            2. Or use stdio transport:
-                               npx -y {config} --stdio
-                            
-                            Server PID: {_extensionProcess.Id}
-                            Port: {serverPort}
-                            """
+                        Instructions = BuildInstructions(connectionUrl, config, _extensionProcess.Id, serverPort)
                     };
                 }
             }
@@ -162,6 +141,32 @@ public class ExtensionTools
                 Message = $"Error: {ex.Message}"
             };
         }
+    }
+
+    private static string BuildInstructions(string connectionUrl, string config, int pid, string port)
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("VS Code Extension MCP Server is running!");
+        sb.AppendLine();
+        sb.AppendLine($"Connection URL: {connectionUrl}");
+        sb.AppendLine();
+        sb.AppendLine("To connect AI Agent:");
+        sb.AppendLine("1. Configure your AI Agent (Claude/Cursor) with:");
+        sb.AppendLine("   {");
+        sb.AppendLine("     \"mcpServers\": {");
+        sb.AppendLine("       \"vscode-extension\": {");
+        sb.AppendLine($"         \"url\": \"{connectionUrl}\",");
+        sb.AppendLine("         \"transport\": \"sse\"");
+        sb.AppendLine("       }");
+        sb.AppendLine("     }");
+        sb.AppendLine("   }");
+        sb.AppendLine();
+        sb.AppendLine("2. Or use stdio transport:");
+        sb.AppendLine($"   npx -y {config} --stdio");
+        sb.AppendLine();
+        sb.AppendLine($"Server PID: {pid}");
+        sb.AppendLine($"Port: {port}");
+        return sb.ToString();
     }
 
     /// <summary>
@@ -187,12 +192,12 @@ public class ExtensionTools
 
             // Try graceful shutdown first
             _extensionProcess.Kill(true);
-            
+
             // Wait for process to exit
             await Task.Run(() => _extensionProcess.WaitForExit(5000), ct);
 
             var isRunning = !_extensionProcess.HasExited;
-            
+
             return new ExtensionServerResult
             {
                 Success = !isRunning,
@@ -220,7 +225,7 @@ public class ExtensionTools
     public ExtensionServerResult GetExtensionServerStatus()
     {
         var isRunning = _extensionProcess != null && !_extensionProcess.HasExited;
-        
+
         return new ExtensionServerResult
         {
             Success = true,
@@ -239,7 +244,7 @@ public class ExtensionTools
     {
         var serverPort = port ?? "5001";
         var connectionUrl = $"http://localhost:{serverPort}/sse";
-        
+
         return new AiAgentConfigResult
         {
             Success = true,
@@ -268,30 +273,35 @@ public class ExtensionTools
                     }
                 }
             },
-            Instructions = $"""
-                Add this to your AI Agent MCP configuration:
-                
-                Claude Desktop (claude_desktop_config.json):
-                {{
-                  "mcpServers": {{
-                    "vscode-extension": {{
-                      "url": "{connectionUrl}",
-                      "transport": "sse"
-                    }}
-                  }}
-                }}
-                
-                Cursor (mcp.json):
-                {{
-                  "servers": {{
-                    "vscode-extension": {{
-                      "url": "{connectionUrl}",
-                      "transport": "sse"
-                    }}
-                  }}
-                }}
-                """
+            Instructions = BuildConfigInstructions(connectionUrl)
         };
+    }
+
+    private static string BuildConfigInstructions(string connectionUrl)
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("Add this to your AI Agent MCP configuration:");
+        sb.AppendLine();
+        sb.AppendLine("Claude Desktop (claude_desktop_config.json):");
+        sb.AppendLine("{");
+        sb.AppendLine("  \"mcpServers\": {");
+        sb.AppendLine("    \"vscode-extension\": {");
+        sb.AppendLine($"      \"url\": \"{connectionUrl}\",");
+        sb.AppendLine("      \"transport\": \"sse\"");
+        sb.AppendLine("    }");
+        sb.AppendLine("  }");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine("Cursor (mcp.json):");
+        sb.AppendLine("{");
+        sb.AppendLine("  \"servers\": {");
+        sb.AppendLine("    \"vscode-extension\": {");
+        sb.AppendLine($"      \"url\": \"{connectionUrl}\",");
+        sb.AppendLine("      \"transport\": \"sse\"");
+        sb.AppendLine("    }");
+        sb.AppendLine("  }");
+        sb.AppendLine("}");
+        return sb.ToString();
     }
 
     /// <summary>
@@ -306,7 +316,7 @@ public class ExtensionTools
             _logger.LogInformation("Installing VS Code Extension from marketplace");
 
             var extensionId = "StarsailsClover.universal-vsmcp";
-            
+
             // Try to use VS Code CLI
             var startInfo = new ProcessStartInfo
             {
@@ -320,10 +330,10 @@ public class ExtensionTools
 
             using var process = new Process { StartInfo = startInfo };
             process.Start();
-            
+
             var output = process.StandardOutput.ReadToEnd();
             var error = process.StandardError.ReadToEnd();
-            
+
             process.WaitForExit();
 
             if (process.ExitCode == 0)
@@ -344,16 +354,7 @@ public class ExtensionTools
                     Success = false,
                     Message = $"Installation failed: {error}",
                     ExtensionId = extensionId,
-                    ManualInstallInstructions = $"""
-                        Please install manually:
-                        1. Open VS Code
-                        2. Go to Extensions (Ctrl+Shift+X)
-                        3. Search for "Universal VS MCP"
-                        4. Click Install
-                        
-                        Or use command line:
-                        code --install-extension {extensionId}
-                        """
+                    ManualInstallInstructions = BuildManualInstallInstructions(extensionId)
                 };
             }
         }
@@ -367,6 +368,20 @@ public class ExtensionTools
                 ManualInstallInstructions = "Please install from VS Code Marketplace manually"
             };
         }
+    }
+
+    private static string BuildManualInstallInstructions(string extensionId)
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("Please install manually:");
+        sb.AppendLine("1. Open VS Code");
+        sb.AppendLine("2. Go to Extensions (Ctrl+Shift+X)");
+        sb.AppendLine("3. Search for \"Universal VS MCP\"");
+        sb.AppendLine("4. Click Install");
+        sb.AppendLine();
+        sb.AppendLine("Or use command line:");
+        sb.AppendLine($"code --install-extension {extensionId}");
+        return sb.ToString();
     }
 }
 

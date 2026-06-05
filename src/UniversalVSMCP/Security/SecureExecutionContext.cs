@@ -238,7 +238,7 @@ public class SecureOperationResult<T>
     public string? Error { get; set; }
     public SecurityErrorType ErrorType { get; set; }
 
-    public static SecureOperationResult<T> Success(T value) => new()
+    public static SecureOperationResult<T> Ok(T value) => new()
     {
         Success = true,
         Value = value

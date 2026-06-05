@@ -6,6 +6,7 @@ using EnvDTE;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
+using UniversalVSMCP.IdeAbstraction;
 
 namespace UniversalVSMCP;
 
@@ -317,3 +318,6 @@ public class ProjectItemInfo
     public string ItemType { get; set; } = string.Empty;
     public List<string> FilePaths { get; set; } = new();
 }
+
+
+

@@ -41,7 +41,7 @@ public class VsDteAdapter : IIdeAdapter
 
     public IdeProcessInfo ProcessInfo => new()
     {
-        ProcessId = _dte?.Application.ProcessID ?? 0,
+        ProcessId = System.Diagnostics.Process.GetProcessesByName("devenv").FirstOrDefault()?.Id ?? 0 ?? 0,
         ProcessName = "devenv",
         StartTime = DateTime.Now // Approximate
     };
@@ -218,7 +218,7 @@ public class VsDteAdapter : IIdeAdapter
                     Type = project.Kind,
                     Language = GetProjectLanguage(project),
                     IsStartupProject = IsStartupProject(project),
-                    Files = GetProjectFiles(project).ToList()
+                    Files = GetProjectFiles(project).Select(f => f.FullPath).ToList()
                 });
             }
             catch (Exception ex)
@@ -300,15 +300,15 @@ public class VsDteAdapter : IIdeAdapter
         }
     }
 
-    public async Task<IReadOnlyList<FileInfo>> GetProjectFilesAsync(string projectName)
+    public async Task<IReadOnlyList<UVMFileInfo>> GetProjectFilesAsync(string projectName)
     {
         await Task.CompletedTask;
         var project = FindProjectByName(projectName);
         if (project == null)
         {
-            return Array.Empty<FileInfo>();
+            return Array.Empty<UVMFileInfo>();
         }
-        return GetProjectFiles(project).ToList();
+        return GetProjectFiles(project).Select(f => f.FullPath).ToList();
     }
 
     #endregion
@@ -325,7 +325,7 @@ public class VsDteAdapter : IIdeAdapter
             {
                 // Navigate to line
                 var selection = (TextSelection?)_dte?.ActiveDocument?.Selection;
-                selection?.GotoLine(line.Value, column ?? 1);
+                selection?.GotoLine(line.Value, false);
             }
             return true;
         }
@@ -384,7 +384,7 @@ public class VsDteAdapter : IIdeAdapter
         }
     }
 
-    public async Task<FileInfo?> GetFileInfoAsync(string filePath)
+    public async Task<UVMFileInfo?> GetUVMFileInfoAsync(string filePath)
     {
         await Task.CompletedTask;
         if (!File.Exists(filePath))
@@ -392,8 +392,8 @@ public class VsDteAdapter : IIdeAdapter
             return null;
         }
 
-        var fileInfo = new System.IO.FileInfo(filePath);
-        return new FileInfo
+        var UVMFileInfo = new System.IO.UVMFileInfo(filePath);
+        return new UVMFileInfo
         {
             Name = fileInfo.Name,
             FullPath = fileInfo.FullName,
@@ -978,9 +978,9 @@ public class VsDteAdapter : IIdeAdapter
         };
     }
 
-    private IEnumerable<FileInfo> GetProjectFiles(Project project)
+    private IEnumerable<UVMFileInfo> GetProjectFiles(Project project)
     {
-        var files = new List<FileInfo>();
+        var files = new List<UVMFileInfo>();
         
         try
         {
@@ -993,8 +993,8 @@ public class VsDteAdapter : IIdeAdapter
                         var path = item.FileNames[0];
                         if (File.Exists(path))
                         {
-                            var info = new System.IO.FileInfo(path);
-                            files.Add(new FileInfo
+                            var info = new System.IO.UVMFileInfo(path);
+                            files.Add(new UVMFileInfo
                             {
                                 Name = info.Name,
                                 FullPath = info.FullName,
@@ -1018,3 +1018,5 @@ public class VsDteAdapter : IIdeAdapter
 
     #endregion
 }
+
+

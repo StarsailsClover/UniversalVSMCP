@@ -312,19 +312,19 @@ public class ToolPermission
 /// </summary>
 public class PermissionResult
 {
-    public bool Granted { get; set; }
+    public bool IsGranted { get; set; }
     public string? DenyReason { get; set; }
     public ToolPermission? Permission { get; set; }
 
     public static PermissionResult Granted(ToolPermission permission) => new()
     {
-        Granted = true,
+        IsGranted = true,
         Permission = permission
     };
 
     public static PermissionResult Denied(string reason) => new()
     {
-        Granted = false,
+        IsGranted = false,
         DenyReason = reason
     };
 }

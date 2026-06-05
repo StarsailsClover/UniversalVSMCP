@@ -86,10 +86,12 @@ public class Program
 
     private static void PrintBanner()
     {
-        Console.WriteLine("=================================================================");
-        Console.WriteLine("     UniversalVSMCP (UVM) v26.2.0-RC1 - Unified MCP Server");
-        Console.WriteLine("        AI Agent ↔ VS 2022/2026 | VS Code Bridge");
-        Console.WriteLine("=================================================================");
+        // Only print banner for non-stdio modes to avoid interfering with MCP protocol
+        // Or print to stderr
+        Console.Error.WriteLine("=================================================================");
+        Console.Error.WriteLine("     UniversalVSMCP (UVM) v26.2.0-RC1 - Unified MCP Server");
+        Console.Error.WriteLine("        AI Agent ↔ VS 2022/2026 | VS Code Bridge");
+        Console.Error.WriteLine("=================================================================");
     }
 
     /// <summary>
@@ -412,77 +414,4 @@ SUPPORTED IDEs:
 For more information: https://github.com/StarsailsClover/UniversalVSMCP
 ");
     }
-}
-
-/// <summary>
-/// Server configuration
-/// </summary>
-public class ServerConfig
-{
-    public TransportMode TransportMode { get; set; } = TransportMode.Stdio;
-    public int HttpPort { get; set; } = 5000;
-    public string? SolutionPath { get; set; }
-    public string? VsVersion { get; set; }
-    public string? LogFile { get; set; }
-    public bool Verify { get; set; }
-    public bool ShowHelp { get; set; }
-}
-
-/// <summary>
-/// File logger provider
-/// </summary>
-public class FileLoggerProvider : ILoggerProvider
-{
-    private readonly string _logFile;
-    
-    public FileLoggerProvider(string logFile)
-    {
-        _logFile = logFile;
-    }
-    
-    public ILogger CreateLogger(string categoryName)
-    {
-        return new FileLogger(_logFile);
-    }
-    
-    public void Dispose() { }
-}
-
-/// <summary>
-/// File logger
-/// </summary>
-public class FileLogger : ILogger
-{
-    private readonly string _logFile;
-    private readonly object _lock = new();
-    
-    public FileLogger(string logFile)
-    {
-        _logFile = logFile;
-    }
-    
-    public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-    
-    public bool IsEnabled(LogLevel logLevel) => true;
-    
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
-    {
-        var message = formatter(state, exception);
-        var line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{logLevel}] {message}";
-        
-        lock (_lock)
-        {
-            File.AppendAllText(_logFile, line + Environment.NewLine);
-        }
-    }
-}
-
-/// <summary>
-/// Transport modes
-/// </summary>
-public enum TransportMode
-{
-    Stdio,
-    Http,
-    Hybrid
 }
