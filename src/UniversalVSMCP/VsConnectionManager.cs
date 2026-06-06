@@ -184,29 +184,50 @@ public class VsConnectionManager : IVsConnectionManager, IDisposable
     private List<(string Key, object Value)> GetRunningObjectTableEntries()
     {
         var entries = new List<(string, object)>();
-        
-        try
+
+        // Try to get running VS instances from ROT using System.Runtime.InteropServices.Marshal.BindToMoniker
+        string[] vsVersions = { "18.0", "17.0", "16.0", "15.0" };
+
+        foreach (var version in vsVersions)
         {
-            // Try to access Running Object Table via COM
-            // This requires stdole or similar COM interop
-            Type? rotType = Type.GetTypeFromProgID("RunningObjectTable");
-            if (rotType != null)
+            try
             {
-                dynamic rotInstance = Activator.CreateInstance(rotType)!;
-                // Enumeration logic would go here
+                // Get active VS instance from ROT
+                var dte = System.Runtime.InteropServices.Marshal.BindToMoniker($"VisualStudio.DTE.{version}") as DTE2;
+                if (dte != null)
+                {
+                    _logger.LogInformation("Found running VS {Version} instance in ROT", version);
+                    entries.Add(($"VisualStudio.DTE.{version}", dte));
+                }
+            }
+            catch (COMException)
+            {
+                // VS not running or not in ROT, continue to next version
+                _logger.LogDebug("VS {Version} not found in ROT", version);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug(ex, "Failed to get VS {Version} from ROT", version);
             }
         }
-        catch (Exception ex)
+
+        // Also try generic moniker without version
+        try
         {
-            _logger.LogDebug(ex, "ROT enumeration failed, will try alternative methods");
+            var dte = System.Runtime.InteropServices.Marshal.BindToMoniker("VisualStudio.DTE") as DTE2;
+            if (dte != null)
+            {
+                _logger.LogInformation("Found generic VS instance in ROT");
+                entries.Add(("VisualStudio.DTE", dte));
+            }
         }
-        
-        // Fallback: Try common ROT monikers directly
-        TryAddRotEntry(entries, "!VisualStudio.DTE.18.0");
-        TryAddRotEntry(entries, "!VisualStudio.DTE.17.0");
-        TryAddRotEntry(entries, "!VisualStudio.DTE.16.0");
-        
+        catch
+        {
+            // Ignore
+        }
+
         return entries;
+
     }
 
     private void TryAddRotEntry(List<(string, object)> entries, string moniker)
