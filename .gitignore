@@ -1,37 +1,44 @@
-# Build outputs
+# Link2VS Suite - UniversalVSMCP .gitignore
+# RC3 Pre-Release Cleanup
+
+## Build outputs
 bin/
 obj/
-*.dll
+publish/
+out/
 *.exe
+*.dll
 *.pdb
-*.cache
+*.deps.json
+*.runtimeconfig.json
 
-# NuGet
-*.nupkg
-nupkg/
-
-# VS Code
-.vscode/
-*.vsix
-
-# IDE
+## IDE
 .vs/
-.idea/
+.vscode/
 *.user
 *.suo
+*.cache
 
-# Test results
-TestResults/
-*.trx
-
-# Logs
+## Logs
 *.log
+logs/
 
-# OS
+## Test results
+TestResults/
+coverage/
+
+## NuGet
+*.nupkg
+
+## OS
 .DS_Store
 Thumbs.db
 
-# VS Code Extension
-vscode-extension/node_modules/
-vscode-extension/out/
-vscode-extension/dist/
+## Release packages (we provide these separately)
+*.zip
+*.tar.gz
+publish-*/
+
+## Local config
+appsettings.Local.json
+*.local.json
