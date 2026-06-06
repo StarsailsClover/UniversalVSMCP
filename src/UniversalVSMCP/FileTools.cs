@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
 using UniversalVSMCP.IdeAbstraction;
+using IOFileInfo = System.IO.FileInfo;
 
 namespace UniversalVSMCP;
 
@@ -217,7 +218,7 @@ public class FileTools
 
         try
         {
-            var info = new FileInfo(filePath);
+            var info = new IOFileInfo(filePath);
             return new FileInfoResult
             {
                 FileName = info.Name,

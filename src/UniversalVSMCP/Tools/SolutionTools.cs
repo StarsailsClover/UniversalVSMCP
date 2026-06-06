@@ -224,15 +224,15 @@ public class SolutionTools
     /// </summary>
     [McpServerTool(Name = "create_solution",
         Title = "Create a new solution or workspace at the specified path.")]
-    public async Task<OperationResult> CreateSolution(string path, string? template = null, CancellationToken ct = default)
+    public async Task<OperationResult<SolutionInfo?>> CreateSolution(string path, string? template = null, CancellationToken ct = default)
     {
         try
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                return new OperationResult
+                return new OperationResult<SolutionInfo?>
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = "Path cannot be empty"
                 };
             }
@@ -243,21 +243,21 @@ public class SolutionTools
             // This would require project template support
             var solution = await _ideRouter.CreateSolutionAsync(path, template ?? "default");
 
-            return new OperationResult
+            return new OperationResult<SolutionInfo?>
             {
-                Success = solution != null,
+                IsSuccess = solution != null,
                 Message = solution != null 
                     ? $"Solution created at: {solution.FullPath}"
                     : "Failed to create solution (may not be supported by current IDE)",
-                Data = solution
+                Value = solution,
             };
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to create solution");
-            return new OperationResult
+            return new OperationResult<SolutionInfo?>
             {
-                Success = false,
+                IsSuccess = false,
                 Message = $"Error: {ex.Message}"
             };
         }
@@ -366,11 +366,11 @@ public class SolutionTools
         return new ProjectInfo
         {
             Name = project.Name,
-            FullName = project.FullPath,
+            FullPath = project.FullPath,
             Language = project.Language,
             Type = project.Type,
             IsStartupProject = project.IsStartupProject,
-            Files = project.Files.Select(f => f.FullPath).ToList()
+            Files = project.Files.ToList()
         };
     }
 

@@ -8,6 +8,7 @@ using ModelContextProtocol;
 using ModelContextProtocol.Server;
 using UniversalVSMCP.IdeAbstraction;
 using UniversalVSMCP.IdeRouting;
+using IOFileInfo = System.IO.FileInfo;
 
 namespace UniversalVSMCP.Tools;
 
@@ -227,7 +228,7 @@ public class FileTools
                     };
                 }
 
-                var info = new FileInfo(filePath);
+                var info = new IOFileInfo(filePath);
                 return new FileInfoResult
                 {
                     Exists = true,

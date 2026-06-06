@@ -8,6 +8,7 @@ using EnvDTE;
 using EnvDTE80;
 using Microsoft.Extensions.Logging;
 using UniversalVSMCP.IdeAbstraction;
+using UVMFileInfo = UniversalVSMCP.IdeAbstraction.FileInfo;
 
 namespace UniversalVSMCP.IdeAdapters;
 
@@ -41,7 +42,7 @@ public class VsDteAdapter : IIdeAdapter
 
     public IdeProcessInfo ProcessInfo => new()
     {
-        ProcessId = System.Diagnostics.Process.GetProcessesByName("devenv").FirstOrDefault()?.Id ?? 0 ?? 0,
+        ProcessId = System.Diagnostics.Process.GetProcessesByName("devenv").FirstOrDefault()?.Id ?? 0,
         ProcessName = "devenv",
         StartTime = DateTime.Now // Approximate
     };
@@ -308,7 +309,7 @@ public class VsDteAdapter : IIdeAdapter
         {
             return Array.Empty<UVMFileInfo>();
         }
-        return GetProjectFiles(project).Select(f => f.FullPath).ToList();
+        return GetProjectFiles(project).ToList();
     }
 
     #endregion
@@ -384,7 +385,7 @@ public class VsDteAdapter : IIdeAdapter
         }
     }
 
-    public async Task<UVMFileInfo?> GetUVMFileInfoAsync(string filePath)
+    public async Task<UVMFileInfo?> GetFileInfoAsync(string filePath)
     {
         await Task.CompletedTask;
         if (!File.Exists(filePath))
@@ -392,7 +393,7 @@ public class VsDteAdapter : IIdeAdapter
             return null;
         }
 
-        var UVMFileInfo = new System.IO.UVMFileInfo(filePath);
+        var fileInfo = new System.IO.FileInfo(filePath);
         return new UVMFileInfo
         {
             Name = fileInfo.Name,
@@ -450,7 +451,7 @@ public class VsDteAdapter : IIdeAdapter
         try
         {
             await Task.CompletedTask;
-            _dte?.Solution.SolutionBuild.Cleanup();
+            _dte?.Solution.SolutionBuild.Clean(true);
             return true;
         }
         catch (Exception ex)
@@ -581,7 +582,7 @@ public class VsDteAdapter : IIdeAdapter
             // Open file first
             await OpenFileAsync(filePath);
             // Set breakpoint
-            _dte?.Debugger.Breakpoints.Add(filePath, line);
+            _dte?.Debugger.Breakpoints.Add(filePath, line.ToString());
             return true;
         }
         catch (Exception ex)
@@ -622,7 +623,14 @@ public class VsDteAdapter : IIdeAdapter
         try
         {
             await Task.CompletedTask;
-            _dte?.Debugger.Breakpoints.DeleteAll();
+            var breakpoints = _dte?.Debugger.Breakpoints;
+            if (breakpoints != null)
+            {
+                foreach (Breakpoint bp in breakpoints)
+                {
+                    bp.Delete();
+                }
+            }
             return true;
         }
         catch (Exception ex)
@@ -732,9 +740,9 @@ public class VsDteAdapter : IIdeAdapter
             {
                 return new DebugLocation
                 {
-                    FilePath = currentFrame.FileName,
-                    Line = currentFrame.Line,
-                    Column = currentFrame.Column,
+                    FilePath = currentFrame.FunctionName, // StackFrame has no FileName
+                    Line = 0, // StackFrame has no Line
+                    Column = 0, // StackFrame has no Column
                     Function = currentFrame.FunctionName
                 };
             }
@@ -784,7 +792,7 @@ public class VsDteAdapter : IIdeAdapter
                         {
                             Name = cmd.Name,
                             DisplayName = cmd.LocalizedName,
-                            Shortcut = cmd.Bindings?.Length > 0 ? cmd.Bindings[0].ToString() : null
+                            Shortcut = (cmd.Bindings as object[])?[0]?.ToString()
                         });
                     }
                     catch { /* Skip commands that can't be accessed */ }
@@ -835,13 +843,13 @@ public class VsDteAdapter : IIdeAdapter
         try
         {
             // Try to get latest VS instance via ROT
-            var rotEntries = System.Runtime.InteropServices.ComTypes.IRunningObjectTable;
+            // ROT access not available in .NET 5+
             
             // For now, use GetActiveObject
-            var dte = (DTE?)System.Runtime.InteropServices.Marshal.GetActiveObject("VisualStudio.DTE.18.0");
+            DTE? dte = null; // Marshal.GetActiveObject not available in .NET 5+
             if (dte == null)
             {
-                dte = (DTE?)System.Runtime.InteropServices.Marshal.GetActiveObject("VisualStudio.DTE.17.0");
+                // dte = (DTE?)Marshal.GetActiveObject("VisualStudio.DTE.17.0"); // Not available
             }
             return dte as DTE2;
         }
@@ -993,7 +1001,7 @@ public class VsDteAdapter : IIdeAdapter
                         var path = item.FileNames[0];
                         if (File.Exists(path))
                         {
-                            var info = new System.IO.UVMFileInfo(path);
+                            var info = new System.IO.FileInfo(path);
                             files.Add(new UVMFileInfo
                             {
                                 Name = info.Name,

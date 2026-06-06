@@ -124,7 +124,7 @@ public class SecureExecutionContext
             var result = await operation(filePath);
             
             auditEntry.SetSucceeded();
-            return SecureOperationResult<T>.Success(result);
+            return SecureOperationResult<T>.Ok(result);
         }
         catch (SecurityException ex)
         {

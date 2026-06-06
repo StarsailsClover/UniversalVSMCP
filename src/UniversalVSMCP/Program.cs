@@ -18,7 +18,7 @@ namespace UniversalVSMCP;
 /// <summary>
 /// UniversalVSMCP (UVM) v26.0.3 - Unified MCP Server for Visual Studio and VS Code
 /// 
-/// Architecture: AI Agent → MCP → IdeRouter → IIdeAdapter → VS/VS Code
+/// Architecture: AI Agent �?MCP �?IdeRouter �?IIdeAdapter �?VS/VS Code
 /// 
 /// Transport Modes:
 ///   --stdio                    # Standard input/output
@@ -90,7 +90,7 @@ public class Program
         // Or print to stderr
         Console.Error.WriteLine("=================================================================");
         Console.Error.WriteLine("     UniversalVSMCP (UVM) v26.2.0-RC1 - Unified MCP Server");
-        Console.Error.WriteLine("        AI Agent ↔ VS 2022/2026 | VS Code Bridge");
+        Console.Error.WriteLine("        AI Agent �?VS 2022/2026 | VS Code Bridge");
         Console.Error.WriteLine("=================================================================");
     }
 
@@ -133,9 +133,9 @@ public class Program
                 services.AddSingleton<HttpMcpServer>(sp => 
                 {
                     var logger = sp.GetRequiredService<ILogger<HttpMcpServer>>();
-                    var router = sp.GetRequiredService<IdeRouter>();
+                    var vsManager = sp.GetRequiredService<IVsConnectionManager>();
                     var tools = sp.GetServices<McpServerTool>();
-                    return new HttpMcpServer(logger, router, tools);
+                    return new HttpMcpServer(logger, vsManager, tools);
                 });
                 
                 // Logging
@@ -153,11 +153,8 @@ public class Program
                 {
                     services.AddMcpServer(options =>
                     {
-                        options.ServerInfo = new ServerInfo
-                        {
-                            Name = "universal-vsmcp",
-                            Version = "26.0.3"
-                        };
+                        options.ServerInfo.Name = "universal-vsmcp";
+                        options.ServerInfo.Version = "26.0.3";
                     })
                     .WithTools<SolutionTools>()
                     .WithTools<BuildTools>()
@@ -244,10 +241,10 @@ public class Program
         logger.LogInformation("Starting HTTP server on port {Port}...", port);
         await httpServer.StartAsync(port);
         
-        Console.WriteLine($"\n✓ HTTP Server ready at: http://localhost:{port}/sse");
-        Console.WriteLine($"✓ Health check:       http://localhost:{port}/health");
-        Console.WriteLine($"✓ Server info:        http://localhost:{port}/info");
-        Console.WriteLine($"✓ Tools list:         http://localhost:{port}/tools");
+        Console.WriteLine($"\n�?HTTP Server ready at: http://localhost:{port}/sse");
+        Console.WriteLine($"�?Health check:       http://localhost:{port}/health");
+        Console.WriteLine($"�?Server info:        http://localhost:{port}/info");
+        Console.WriteLine($"�?Tools list:         http://localhost:{port}/tools");
         Console.WriteLine("\nPress Ctrl+C to stop the server.");
         
         await Task.Delay(Timeout.Infinite);
@@ -274,7 +271,7 @@ public class Program
         
         if (result.Success && result.Adapter != null)
         {
-            Console.WriteLine($"✓ Connected to: {result.Adapter.IdeName} {result.Adapter.IdeVersion}");
+            Console.WriteLine($"�?Connected to: {result.Adapter.IdeName} {result.Adapter.IdeVersion}");
             Console.WriteLine($"  Instance ID: {result.InstanceId}");
             
             var solution = await result.Adapter.GetSolutionAsync();
@@ -288,7 +285,7 @@ public class Program
         }
         else
         {
-            Console.WriteLine($"✗ Connection failed: {result.ErrorMessage}");
+            Console.WriteLine($"�?Connection failed: {result.ErrorMessage}");
             Console.WriteLine("  Make sure VS or VS Code is running with a solution open.");
             return 1;
         }

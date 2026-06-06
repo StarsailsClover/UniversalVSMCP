@@ -384,6 +384,7 @@ public class ServerConfig
     public int HttpPort { get; set; } = 5000;
     public string? LogFile { get; set; }
     public string? VsVersion { get; set; }
+    public string? SolutionPath { get; set; }
     public bool Verify { get; set; }
     public bool ShowHelp { get; set; }
 }

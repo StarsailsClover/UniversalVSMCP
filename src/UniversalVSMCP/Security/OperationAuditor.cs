@@ -295,6 +295,7 @@ public enum AuditStatus
 /// </summary>
 public enum SecurityEventType
 {
+    None,
     PathValidationFailed,
     TrustCheckFailed,
     ExtensionBlocked,
