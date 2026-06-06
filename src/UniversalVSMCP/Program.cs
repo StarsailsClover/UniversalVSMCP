@@ -16,7 +16,7 @@ using UniversalVSMCP.Security;
 namespace UniversalVSMCP;
 
 /// <summary>
-/// UniversalVSMCP (UVM) v26.0.3 - Unified MCP Server for Visual Studio and VS Code
+/// UniversalVSMCP (UVM) v26.2.0-rc3 - Unified MCP Server for Visual Studio and VS Code
 /// 
 /// Architecture: AI Agent �?MCP �?IdeRouter �?IIdeAdapter �?VS/VS Code
 /// 
@@ -129,6 +129,13 @@ public class Program
                     return new VsCodeAdapter(logger);
                 });
                 
+                // VS Connection Manager
+                services.AddSingleton<IVsConnectionManager, VsConnectionManager>(sp =>
+                {
+                    var logger = sp.GetRequiredService<ILogger<VsConnectionManager>>();
+                    return new VsConnectionManager(logger);
+                });
+                
                 // HTTP Server
                 services.AddSingleton<HttpMcpServer>(sp => 
                 {
@@ -154,7 +161,7 @@ public class Program
                     services.AddMcpServer(options =>
                     {
                         options.ServerInfo.Name = "universal-vsmcp";
-                        options.ServerInfo.Version = "26.0.3";
+                        options.ServerInfo.Version = "26.2.0-rc3";
                     })
                     .WithTools<SolutionTools>()
                     .WithTools<BuildTools>()

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "baZMBtGpB64=",
+  "dgSpecHash": "W9/75EQK9W8=",
   "success": true,
   "projectFilePath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
   "expectedPackageFiles": [
@@ -41,7 +41,10 @@
     "C:\\Users\\Sails\\.nuget\\packages\\system.io.pipelines\\8.0.0\\system.io.pipelines.8.0.0.nupkg.sha512",
     "C:\\Users\\Sails\\.nuget\\packages\\system.net.serversentevents\\10.0.0-preview.4.25258.110\\system.net.serversentevents.10.0.0-preview.4.25258.110.nupkg.sha512",
     "C:\\Users\\Sails\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
-    "C:\\Users\\Sails\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512"
+    "C:\\Users\\Sails\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.27\\microsoft.netcore.app.runtime.win-x64.8.0.27.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.27\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.27.nupkg.sha512",
+    "C:\\Users\\Sails\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.27\\microsoft.aspnetcore.app.runtime.win-x64.8.0.27.nupkg.sha512"
   ],
   "logs": [
     {
@@ -78,6 +81,32 @@
       "warningLevel": 1,
       "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
       "libraryId": "ModelContextProtocol",
+      "targetGraphs": [
+        "net8.0",
+        "net8.0/win-x64"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "包 \"System.Text.Json\" 8.0.0 具有已知的 高 严重性漏洞，https://github.com/advisories/GHSA-8g4q-xg66-9fp4",
+      "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "libraryId": "System.Text.Json",
+      "targetGraphs": [
+        "net8.0",
+        "net8.0/win-x64"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "包 \"System.Text.Json\" 8.0.0 具有已知的 高 严重性漏洞，https://github.com/advisories/GHSA-hh2w-p6rv-4g7w",
+      "projectPath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Sails\\Documents\\Workspace\\NormalWorkspace\\Coding\\Archives\\UniversalVSMCP\\src\\UniversalVSMCP\\UniversalVSMCP.csproj",
+      "libraryId": "System.Text.Json",
       "targetGraphs": [
         "net8.0",
         "net8.0/win-x64"
